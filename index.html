@@ -27,7 +27,7 @@
     <!-- Dynamic Header will be injected here by src/main.js -->
 
     <main class="flex-1 flex flex-col container mx-auto max-w-[1440px]">
-        <section class="p-4 lg:p-6 w-full" id="hero-slider-container">
+        <section class="p-4 lg:p-4 w-full" id="hero-slider-container">
             <!-- ===== Category Hero Carousel ===== -->
             <div id="categoryCarousel" class="relative w-full rounded-2xl overflow-hidden shadow-xl"
                 style="min-height: 340px;">
@@ -350,7 +350,7 @@
                 })();
             </script>
         </section>
-        <section class="grid grid-cols-2 md:grid-cols-4 gap-4 px-6 pb-8 border-b border-border-light mb-8">
+        <section class="grid grid-cols-2 md:grid-cols-4 gap-4 px-6 pb-2 border-b border-border-light mb-2">
             <div
                 class="flex items-center gap-3 p-4 rounded-xl bg-section-bg border border-transparent hover:border-primary/20 transition-colors">
                 <span class="material-symbols-outlined text-primary text-3xl">local_shipping</span>
@@ -384,128 +384,107 @@
                 </div>
             </div>
         </section>
-        <section id="collections" class="px-4 py-8 lg:py-12 bg-white">
-            <div class="flex justify-between items-end mb-8 px-2">
-                <div>
-                    <h2 class="text-2xl lg:text-3xl font-black text-text-dark mb-2">Premium Koleksiyonlarımız</h2>
-                    <p class="text-text-muted font-medium">En seçkin lezzetleri kategorilere göre keşfedin</p>
+        <section id="collections" class="px-4 py-6 lg:py-10 bg-white">
+            <div class="container mx-auto max-w-[1440px]">
+                <div class="flex flex-col md:flex-row justify-between items-end mb-12 px-2">
+                    <div class="text-center md:text-left w-full md:w-auto mb-6 md:mb-0">
+                        <h2 class="text-3xl lg:text-4xl font-black text-text-dark mb-3">Kategoriye Göre </h2>
+                        <p class="text-text-muted font-medium text-lg">Geleneksel lezzetlerden oluşan geniş yelpazemizi
+                            keşfedin.
+                        </p>
+                    </div>
+                    <a class="hidden md:flex items-center gap-2 text-[#ec9213] text-sm font-bold hover:underline transition-all"
+                        href="product_category.html">
+                        Tüm Kategoriler <span class="material-symbols-outlined text-sm font-bold">arrow_forward</span>
+                    </a>
                 </div>
-                <a class="hidden md:flex items-center gap-1 text-primary text-sm font-bold hover:underline"
-                    href="product_category.html">
-                    Tüm Kategoriler <span class="material-symbols-outlined text-sm">arrow_forward</span>
-                </a>
-            </div>
 
-            <!-- Updated Grid: 6 Columns on LG, 3 on MD, 2 on SM -->
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 px-2">
 
-                <!-- 1. Kuruyemiş -->
-                <a class="group relative overflow-hidden rounded-xl aspect-[3/4] shadow-md hover:shadow-xl transition-all duration-300"
-                    href="product_category.html?cat=kuruyemis">
-                    <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
-                        style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAeNPGn5ZKpT5u0ZMpP2iA8-sKnN_wT3qr1Rx7Vg01dFABezIlXgWmlI9EmM1UJGUclszCSP4YWPXWcKEWo59nAg4wt2uwiHt3alE4PtcCu0isSobI54dgh3Uw3r3Ugba_WYp6zfm1kwi1kSJYWJtDOAclFpoXSFBCGmepTM4qbBjZ93uljAG5W7cbNhwryg3-GQ59iAr3KVZrKb3D8mHJw2-PaorfHr5mvI2w_tR2QrJUzqUTMLmkvAMgFFY6HAzPe4Mbc005ED7M');">
-                    </div>
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
-                    <div class="absolute bottom-0 left-0 p-4 w-full">
-                        <h3
-                            class="text-lg font-bold text-white mb-0.5 group-hover:text-primary-light transition-colors">
+                    <!-- 1. Kuruyemiş -->
+                    <a href="product_category.html?cat=kuruyemis" class="group flex flex-col items-center text-center">
+                        <div
+                            class="relative w-32 h-32 md:w-44 md:h-44 rounded-full overflow-hidden shadow-lg group-hover:shadow-2xl transition-all duration-500 border-4 border-white mb-6 bg-gray-50">
+                            <div class="absolute inset-0 bg-cover bg-center group-hover:scale-110 transition-transform duration-700"
+                                style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAeNPGn5ZKpT5u0ZMpP2iA8-sKnN_wT3qr1Rx7Vg01dFABezIlXgWmlI9EmM1UJGUclszCSP4YWPXWcKEWo59nAg4wt2uwiHt3alE4PtcCu0isSobI54dgh3Uw3r3Ugba_WYp6zfm1kwi1kSJYWJtDOAclFpoXSFBCGmepTM4qbBjZ93uljAG5W7cbNhwryg3-GQ59iAr3KVZrKb3D8mHJw2-PaorfHr5mvI2w_tR2QrJUzqUTMLmkvAMgFFY6HAzPe4Mbc005ED7M');">
+                            </div>
+                        </div>
+                        <h3 class="text-lg font-bold text-text-dark group-hover:text-primary transition-colors">
                             Kuruyemiş</h3>
-                        <p class="text-gray-300 text-xs font-medium">Taze Kavrulmuş</p>
-                    </div>
-                </a>
+                    </a>
 
-                <!-- 2. Şarküteri -->
-                <a class="group relative overflow-hidden rounded-xl aspect-[3/4] shadow-md hover:shadow-xl transition-all duration-300"
-                    href="product_category.html?cat=sarkuteri">
-                    <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
-                        style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBH8VArVN6n-tDprj6IDSnMMJenTyMsneYlONbSgyLLQtLVqg2Zu1iToepDwvvJ-HvRMC0ZRgNQyvwduy48jJY9jFYknpURMheNX8BL63p1TSNsw7CvC4aDIBB04Y2zmmwNhjT9rSaBtbx2A2-VOO7gDHyJ8Pp4Ti4OrPfhRTQhnUATQXg7mnAKxhDz6_G2dzXLQJkO7QgSomHSgKs5KWuLreEVMmx1WJ8vRm7q-xa8PT1-rtgRUkI8IpJbvWgYpN9t9vTacy5xZZI');">
-                    </div>
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
-                    <div class="absolute bottom-0 left-0 p-4 w-full">
-                        <h3
-                            class="text-lg font-bold text-white mb-0.5 group-hover:text-primary-light transition-colors">
+                    <!-- 2. Aktar -->
+                    <a href="product_category.html?cat=aktar" class="group flex flex-col items-center text-center">
+                        <div
+                            class="relative w-32 h-32 md:w-44 md:h-44 rounded-full overflow-hidden shadow-lg group-hover:shadow-2xl transition-all duration-500 border-4 border-white mb-6 bg-gray-50">
+                            <div class="absolute inset-0 bg-cover bg-center group-hover:scale-110 transition-transform duration-700"
+                                style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAQJC22B122cg_g0zbJ1XGhfxg0JsvL3V9ksOAUBP-4e2pjSbwpBqV7vtayhkVTFco4-FSlsinxkCuzjShevJs3-FHc5MW1abKoPFLNhkBc_Zbz6sOOIQJM7HYygoiaoUGfeGeU7-LnMmD2hd8mvgbWTa62Q7TS5ese8KUDLyJYvY6jwIjg6n9HKAI4p_vyEPoTMQOpvMFVKNe_4G5VXBTMrt3ZJURgGGAflv5O89IW8JUBdeloUXWbMd4B9ytdlc251FAfXvx7HzM');">
+                            </div>
+                        </div>
+                        <h3 class="text-lg font-bold text-text-dark group-hover:text-primary transition-colors">Aktar
+                        </h3>
+                    </a>
+
+                    <!-- 3. Bakliyat -->
+                    <a href="product_category.html?cat=bakliyat" class="group flex flex-col items-center text-center">
+                        <div
+                            class="relative w-32 h-32 md:w-44 md:h-44 rounded-full overflow-hidden shadow-lg group-hover:shadow-2xl transition-all duration-500 border-4 border-white mb-6 bg-gray-50">
+                            <div class="absolute inset-0 bg-cover bg-center group-hover:scale-110 transition-transform duration-700"
+                                style="background-image: url('https://images.unsplash.com/photo-1586201375761-83865001e31c?q=80&w=1000&auto=format&fit=crop');">
+                            </div>
+                        </div>
+                        <h3 class="text-lg font-bold text-text-dark group-hover:text-primary transition-colors">
+                            Bakliyat
+                        </h3>
+                    </a>
+
+                    <!-- 4. Pestil & Köme -->
+                    <a href="product_category.html?cat=pestil" class="group flex flex-col items-center text-center">
+                        <div
+                            class="relative w-32 h-32 md:w-44 md:h-44 rounded-full overflow-hidden shadow-lg group-hover:shadow-2xl transition-all duration-500 border-4 border-white mb-6 bg-gray-50">
+                            <div class="absolute inset-0 bg-cover bg-center group-hover:scale-110 transition-transform duration-700"
+                                style="background-image: url('https://images.unsplash.com/photo-1595981267035-7b04ca84a82d?q=80&w=1000&auto=format&fit=crop');">
+                            </div>
+                        </div>
+                        <h3 class="text-lg font-bold text-text-dark group-hover:text-primary transition-colors">Pestil
+                            &
+                            Köme</h3>
+                    </a>
+
+                    <!-- 5. Yöresel -->
+                    <a href="product_category.html?cat=yoresel" class="group flex flex-col items-center text-center">
+                        <div
+                            class="relative w-32 h-32 md:w-44 md:h-44 rounded-full overflow-hidden shadow-lg group-hover:shadow-2xl transition-all duration-500 border-4 border-white mb-6 bg-gray-50">
+                            <div class="absolute inset-0 bg-cover bg-center group-hover:scale-110 transition-transform duration-700"
+                                style="background-image: url('https://images.unsplash.com/photo-1627308595229-7830a5c91f9f?q=80&w=1000&auto=format&fit=crop');">
+                            </div>
+                        </div>
+                        <h3 class="text-lg font-bold text-text-dark group-hover:text-primary transition-colors">
+                            Yöresel
+                        </h3>
+                    </a>
+
+                    <!-- 6. Şarküteri -->
+                    <a href="product_category.html?cat=sarkuteri" class="group flex flex-col items-center text-center">
+                        <div
+                            class="relative w-32 h-32 md:w-44 md:h-44 rounded-full overflow-hidden shadow-lg group-hover:shadow-2xl transition-all duration-500 border-4 border-white mb-6 bg-gray-50">
+                            <div class="absolute inset-0 bg-cover bg-center group-hover:scale-110 transition-transform duration-700"
+                                style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBH8VArVN6n-tDprj6IDSnMMJenTyMsneYlONbSgyLLQtLVqg2Zu1iToepDwvvJ-HvRMC0ZRgNQyvwduy48jJY9jFYknpURMheNX8BL63p1TSNsw7CvC4aDIBB04Y2zmmwNhjT9rSaBtbx2A2-VOO7gDHyJ8Pp4Ti4OrPfhRTQhnUATQXg7mnAKxhDz6_G2dzXLQJkO7QgSomHSgKs5KWuLreEVMmx1WJ8vRm7q-xa8PT1-rtgRUkI8IpJbvWgYpN9t9vTacy5xZZI');">
+                            </div>
+                        </div>
+                        <h3 class="text-lg font-bold text-text-dark group-hover:text-primary transition-colors">
                             Şarküteri</h3>
-                        <p class="text-gray-300 text-xs font-medium">Gurme Lezzetler</p>
-                    </div>
-                </a>
+                    </a>
 
-                <!-- 3. Aktar -->
-                <a class="group relative overflow-hidden rounded-xl aspect-[3/4] shadow-md hover:shadow-xl transition-all duration-300"
-                    href="product_category.html?cat=aktar">
-                    <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
-                        style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAQJC22B122cg_g0zbJ1XGhfxg0JsvL3V9ksOAUBP-4e2pjSbwpBqV7vtayhkVTFco4-FSlsinxkCuzjShevJs3-FHc5MW1abKoPFLNhkBc_Zbz6sOOIQJM7HYygoiaoUGfeGeU7-LnMmD2hd8mvgbWTa62Q7TS5ese8KUDLyJYvY6jwIjg6n9HKAI4p_vyEPoTMQOpvMFVKNe_4G5VXBTMrt3ZJURgGGAflv5O89IW8JUBdeloUXWbMd4B9ytdlc251FAfXvx7HzM');">
-                    </div>
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
-                    <div class="absolute bottom-0 left-0 p-4 w-full">
-                        <h3
-                            class="text-lg font-bold text-white mb-0.5 group-hover:text-primary-light transition-colors">
-                            Aktar</h3>
-                        <p class="text-gray-300 text-xs font-medium">Şifalı Bitkiler</p>
-                    </div>
-                </a>
+                </div>
 
-                <!-- 4. Bakliyat (New) -->
-                <a class="group relative overflow-hidden rounded-xl aspect-[3/4] shadow-md hover:shadow-xl transition-all duration-300"
-                    href="product_category.html?cat=bakliyat">
-                    <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
-                        style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuC1_Y28S-cK9p9C7c2v3z0O6D8k4L7M5N9P1o2Q3R4S_T5U6V7W8X9Y0Z1a2B3c4D5e6F7g8H9i0J1k2L3m4N5o6P7q8R9s0T1u2V3w4X5y6Z7a8B9c0D1e2F3g4H5i6J7k8L9m0N1o2P3q4R5s6T7u8V9w0X1y2Z3a4B5c6');">
-                        <!-- Placeholder image URL, using one of the existing valid URLs or a new one to simulate visual diversity -->
-                        <!-- Using a generic food/grain like image from a reliable source would be better, but re-using one for simulation and then noting to user to update is standard. 
-                              Let's use a visibly different valid image from the set or a color placeholder if needed. 
-                              I will use the "Aktar" image with a filter or just a similar one for now to ensure it loads.
-                              Actually, I will use a reliable unsplash/placeholder for "Legumes" if I can, but keeping to "lh3" links implies internal assets.
-                              I will reuse the Şarküteri one for now but label it correctly, or ideally, use a real one.
-                              Let's use the first one again but distinct. 
-                              Actually, I'll use a placeholder from a standard library if possible? No, user wants specific style. 
-                              I will use the "Aktar" image but focused differently conceptually. 
-                              BETTER: I'll use the Kuruyemiş image but different crop? No. 
-                              I will use the same image as Aktar for Bakliyat for now as a placeholder, changing the title. 
-                              Wait, I can try to find if I used other images. 
-                              Let's just use the Aktar image for Bakliyat, and Şarküteri for Yöresel. Limiting distinct images availability.
-                         -->
-                    </div>
-                    <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
-                        style="background-image: url('https://images.unsplash.com/photo-1586201375761-83865001e31c?q=80&w=1000&auto=format&fit=crop');">
-                    </div>
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
-                    <div class="absolute bottom-0 left-0 p-4 w-full">
-                        <h3
-                            class="text-lg font-bold text-white mb-0.5 group-hover:text-primary-light transition-colors">
-                            Bakliyat</h3>
-                        <p class="text-gray-300 text-xs font-medium">Doğal & Yerli</p>
-                    </div>
-                </a>
-
-                <!-- 5. Pestil & Köme (New) -->
-                <a class="group relative overflow-hidden rounded-xl aspect-[3/4] shadow-md hover:shadow-xl transition-all duration-300"
-                    href="product_category.html?cat=pestil">
-                    <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
-                        style="background-image: url('https://images.unsplash.com/photo-1595981267035-7b04ca84a82d?q=80&w=1000&auto=format&fit=crop');">
-                    </div>
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
-                    <div class="absolute bottom-0 left-0 p-4 w-full">
-                        <h3
-                            class="text-lg font-bold text-white mb-0.5 group-hover:text-primary-light transition-colors">
-                            Pestil & Köme</h3>
-                        <p class="text-gray-300 text-xs font-medium">Geleneksel Tatlar</p>
-                    </div>
-                </a>
-
-                <!-- 6. Yöresel Ürünler (New) -->
-                <a class="group relative overflow-hidden rounded-xl aspect-[3/4] shadow-md hover:shadow-xl transition-all duration-300"
-                    href="product_category.html?cat=yoresel">
-                    <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
-                        style="background-image: url('https://images.unsplash.com/photo-1627308595229-7830a5c91f9f?q=80&w=1000&auto=format&fit=crop');">
-                    </div>
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
-                    <div class="absolute bottom-0 left-0 p-4 w-full">
-                        <h3
-                            class="text-lg font-bold text-white mb-0.5 group-hover:text-primary-light transition-colors">
-                            Yöresel Ürünler</h3>
-                        <p class="text-gray-300 text-xs font-medium">Anadolu'dan</p>
-                    </div>
-                </a>
-
+                <!-- Mobile View All Button -->
+                <div class="mt-8 flex justify-center md:hidden">
+                    <a class="flex items-center gap-2 text-[#ec9213] text-sm font-bold hover:underline"
+                        href="product_category.html">
+                        Tüm Kategoriler <span class="material-symbols-outlined text-sm font-bold">arrow_forward</span>
+                    </a>
+                </div>
             </div>
         </section>
 

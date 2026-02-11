@@ -6,12 +6,14 @@ export function renderHeader() {
     const headers = [];
 
     // Announcement Bar
+    /*
     if (activeAnnouncement) {
         const announceBar = document.createElement('div');
         announceBar.className = 'bg-primary text-white text-xs font-bold py-2 px-4 text-center tracking-wide';
         announceBar.innerHTML = activeAnnouncement.text;
         headers.push(announceBar);
     }
+    */
 
     const header = document.createElement('header');
     header.className = 'sticky top-0 z-50 bg-white border-b border-border-light shadow-sm';

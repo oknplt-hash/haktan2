@@ -37,7 +37,7 @@ const DEFAULT_ANNOUNCEMENTS = [
     {
         id: 1,
         text: "🎉 Açılışa özel tüm ürünlerde %10 indirim! Kod: HAKTAN10",
-        active: true,
+        active: false,
         type: "info"
     }
 ];
