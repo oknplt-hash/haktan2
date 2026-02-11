@@ -18,7 +18,7 @@ export function renderHeader() {
     const header = document.createElement('header');
     header.className = 'sticky top-0 z-50 bg-white border-b border-border-light shadow-sm';
     header.innerHTML = `
-        <div class="container mx-auto px-4 lg:px-10 flex items-center justify-between py-3 gap-4">
+        <div class="container mx-auto px-6 md:px-12 lg:px-20 flex items-center justify-between py-3 gap-4">
             <a href="index.html" class="flex items-center gap-2 shrink-0">
                 <span class="material-symbols-outlined text-primary text-3xl">diamond</span>
                 <div class="flex flex-col">
@@ -53,7 +53,7 @@ export function renderHeader() {
         
         <!-- Desktop Nav -->
         <nav class="hidden md:flex w-full bg-white border-t border-border-light">
-            <div class="container mx-auto px-4 lg:px-10 overflow-x-auto">
+            <div class="container mx-auto px-6 md:px-12 lg:px-20 overflow-x-auto">
                 <ul class="flex items-center gap-8 py-3 text-sm font-semibold whitespace-nowrap text-text-main">
                     <li><a class="hover:text-primary pb-0.5 transition-all" href="index.html">Ana Sayfa</a></li>
                     <li><a class="hover:text-primary pb-0.5 transition-all" href="product_category.html?cat=kuruyemis">Kuruyemiş</a></li>
