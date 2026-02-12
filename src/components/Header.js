@@ -20,7 +20,7 @@ export function renderHeader() {
     header.innerHTML = `
         <div class="container mx-auto max-w-7xl px-6 md:px-12 lg:px-20 flex items-center justify-between py-3 gap-4">
             <a href="index.html" class="flex items-center gap-2 shrink-0">
-                <span class="material-symbols-outlined text-primary text-3xl">diamond</span>
+                <span class="material-symbols-outlined text-primary text-3xl">nutrition</span>
                 <div class="flex flex-col">
                     <h2 class="text-xl font-bold leading-none tracking-tight text-text-main">HAKTAN</h2>
                     <span class="text-xs text-text-muted font-medium tracking-wide">Kuruyemiş Şarküteri Sarayı</span>
