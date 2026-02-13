@@ -6,30 +6,48 @@
 const DEFAULT_SLIDERS = [
     {
         id: 1,
-        image: "https://images.unsplash.com/photo-1627308595229-7830a5c91f9f?q=80&w=2000&auto=format&fit=crop",
-        title: "Saray Lezzetleri Kapınızda",
-        subtitle: "Lüks seçkilerimizin saraylara layık tadını deneyimleyin. Taptaze kavrulmuş Antep fıstığından egzotik kuru meyvelere kadar en iyisi burada.",
-        buttonText: "Alışverişe Başla",
-        buttonLink: "product_category.html",
-        startDate: "2023-10-20",
-        endDate: "2023-10-25",
-        clicks: 420,
+        image: "https://images.unsplash.com/photo-1599599810694-b5b37304c041?q=80&w=1600&auto=format&fit=crop",
+        title: "Taze Kavrulmuş Kuruyemiş",
+        subtitle: "Antep fıstığından kaju cevizine, bademden fındığa… Taze kavrulmuş, birinci sınıf kuruyemişlerin en seçkinleri.",
+        buttonText: "Keşfet",
+        buttonLink: "product_category.html?cat=kuruyemis",
+        startDate: new Date().toISOString().split('T')[0],
+        endDate: "2026-12-31",
+        clicks: 0,
         active: true,
-        type: "banner"
+        type: "banner",
+        tag: "En Çok Tercih Edilen",
+        icon: "local_fire_department"
     },
     {
         id: 2,
-        image: "https://lh3.googleusercontent.com/aida-public/AB6AXuAc3irhx7nvPaeQsyLzFVwZQGlDzClUU3doMMTp2E6c152FZpKH_QtA_SNflYtfVwL9-HcGG9mjUjbyg-VP5sstgn2qLhvNkcEJ6xdPJedpMQto2OTy-fUavdd0a02mkdynmwL_vANJbIk8kB79yhDPZn4wdtmdteRl9V5zDJ5hZNzp3MzGXdRjp-zuO_kB89Gz0DqE53YWyZTJY2aM9Bes6CR0KYipsw5SD-Zdc52Hj3tuBfpA6GnEfK1qt-5vYmndf6JjfjEJPVg",
-        title: "Yeni Ürünler: Geleneksel Lokumlar",
-        subtitle: "Afyon lokumları stoklarımızda.",
+        image: "https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=1600&auto=format&fit=crop",
+        title: "Premium Şarküteri",
+        subtitle: "Sucuk, pastırma, kaşar peyniri ve daha fazlası… Geleneksel tariflerle hazırlanan şarküteri lezzetleri sofranızda.",
         buttonText: "Keşfet",
-        buttonLink: "product_category.html?cat=lokum",
-        startDate: "2023-11-01",
-        endDate: "2023-11-05",
+        buttonLink: "product_category.html?cat=sarkuteri",
+        startDate: new Date().toISOString().split('T')[0],
+        endDate: "2026-12-31",
         clicks: 0,
-        active: false,
-        status: "planned", // New status field
-        type: "banner"
+        active: true,
+        type: "banner",
+        tag: "Gurme Seçim",
+        icon: "restaurant"
+    },
+    {
+        id: 3,
+        image: "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?q=80&w=1600&auto=format&fit=crop",
+        title: "Şifalı Bitkiler & Baharatlar",
+        subtitle: "Doğanın şifa deposu… Bitkisel çaylar, baharatlar ve aromatik bitkiler ile sağlıklı yaşamın kapısını aralayın.",
+        buttonText: "Keşfet",
+        buttonLink: "product_category.html?cat=aktar",
+        startDate: new Date().toISOString().split('T')[0],
+        endDate: "2026-12-31",
+        clicks: 0,
+        active: true,
+        type: "banner",
+        tag: "Doğal & Şifalı",
+        icon: "spa"
     }
 ];
 
@@ -37,24 +55,31 @@ const DEFAULT_ANNOUNCEMENTS = [
     {
         id: 1,
         text: "🎉 Açılışa özel tüm ürünlerde %10 indirim! Kod: HAKTAN10",
-        active: false,
+        active: true,
         type: "info"
+    },
+    {
+        id: 2,
+        text: "🚚 500 TL ve üzeri alışverişlerinizde kargo ücretsiz!",
+        active: false,
+        type: "success"
     }
 ];
 
 // ---- Sliders ----
 
 export function getSliders() {
-    const sliders = JSON.parse(localStorage.getItem("haktan_sliders_v2"));
-    if (!sliders) {
-        localStorage.setItem("haktan_sliders_v2", JSON.stringify(DEFAULT_SLIDERS));
+    let sliders = JSON.parse(localStorage.getItem("haktan_sliders_v3")); // Incremented version to force reset
+    if (!sliders || sliders.length === 0) {
+        console.log("HaktanApp: Initializing sliders with defaults...");
+        localStorage.setItem("haktan_sliders_v3", JSON.stringify(DEFAULT_SLIDERS));
         return DEFAULT_SLIDERS;
     }
     return sliders;
 }
 
 export function saveSliders(sliders) {
-    localStorage.setItem("haktan_sliders_v2", JSON.stringify(sliders));
+    localStorage.setItem("haktan_sliders_v3", JSON.stringify(sliders));
 }
 
 export function addSlider(slider) {

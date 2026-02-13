@@ -31,7 +31,8 @@
             <!-- Header -->
             <div>
                 <h1 class="text-3xl font-black text-gray-900">Admin Kampanya Yönetimi</h1>
-                <p class="text-gray-500 mt-1">HAKTAN Sarayı için ana sayfa bannerlarını ve duyuruları yönetin.</p>
+                <p class="text-gray-500 mt-1">HAKTAN Sarayı için ana sayfa bannerlarını ve duyuru yazılarını yönetin.
+                </p>
             </div>
 
             <!-- Stats Cards -->
@@ -86,7 +87,10 @@
                     <div class="flex items-center gap-1 bg-gray-100/50 p-1 rounded-lg w-fit">
                         <button
                             class="px-4 py-1.5 rounded-md text-sm font-bold bg-white shadow-sm text-gray-900 tab-btn"
-                            onclick="filterCampaigns('all')">Duyurular</button>
+                            onclick="window.switchManagementView('banners')">Bannerlar</button>
+                        <button
+                            class="px-4 py-1.5 rounded-md text-sm font-bold text-gray-500 hover:text-gray-900 tab-btn"
+                            onclick="window.switchManagementView('announcements')">Duyurular</button>
                         <button
                             class="px-4 py-1.5 rounded-md text-sm font-bold text-gray-500 hover:text-gray-900 tab-btn"
                             onclick="switchView('products')">Haftanın Ürünleri</button>
@@ -95,8 +99,11 @@
 
                 <!-- Content Area -->
                 <div id="campaignContent" class="flex-1 overflow-y-auto">
-                    <!-- Default: Campaign List -->
+                    <!-- Banner List -->
                     <div class="divide-y divide-gray-50" id="campaignList"></div>
+
+                    <!-- Announcement List (Hidden by default) -->
+                    <div class="divide-y divide-gray-50 hidden" id="announcementList"></div>
 
                     <!-- Weekly Products View (Hidden by default) -->
                     <div id="weeklyProductsView" class="hidden p-6">
@@ -128,9 +135,9 @@
         <div class="w-[400px] bg-white rounded-2xl border border-gray-100 shadow-lg p-6 flex flex-col shrink-0 h-fit">
             <div class="flex items-center gap-3 mb-6">
                 <span class="w-10 h-10 rounded-lg bg-[#fff4e5] text-primary flex items-center justify-center">
-                    <span class="material-symbols-outlined">add_photo_alternate</span>
+                    <span class="material-symbols-outlined" id="formIcon">add_photo_alternate</span>
                 </span>
-                <h2 class="text-xl font-black text-gray-900">Duyuru Oluştur</h2>
+                <h2 class="text-xl font-black text-gray-900" id="formTitle">Banner Oluştur</h2>
             </div>
 
             <form id="campaignForm" class="space-y-5">
@@ -206,7 +213,7 @@
 
     <script type="module" src="/src/admin-main.js"></script>
     <script type="module">
-        import { getSliders, addSlider, updateSlider, deleteSlider, getCampaignProducts, addCampaignProduct, removeCampaignProduct } from './src/modules/campaigns.js';
+        import { getSliders, addSlider, updateSlider, deleteSlider, getAnnouncements, addAnnouncement, updateAnnouncement, deleteAnnouncement, getCampaignProducts, addCampaignProduct, removeCampaignProduct } from './src/modules/campaigns.js';
         import { getProducts, searchProducts, seedProducts } from './src/modules/products.js';
         import { isAdminLoggedIn } from './src/modules/admin.js';
 
@@ -227,7 +234,7 @@
         document.body.prepend(renderSidebar('campaigns'));
 
 
-        // --- App Logic ---
+        let currentManagementMode = 'banners'; // 'banners' or 'announcements'
 
         function renderStats() {
             const sliders = getSliders();
@@ -242,42 +249,69 @@
 
         function renderList(filter = 'all') {
             const list = document.getElementById('campaignList');
-            let items = getSliders();
+            const annList = document.getElementById('announcementList');
 
-            if (filter === 'active') items = items.filter(i => i.active);
-            if (filter === 'planned') items = items.filter(i => !i.active && i.startDate); // simplified logic
-            if (filter === 'ended') items = items.filter(i => false); // Mock
+            if (currentManagementMode === 'banners') {
+                list.classList.remove('hidden');
+                annList.classList.add('hidden');
+                let items = getSliders();
 
-            list.innerHTML = items.map(item => `
-                <div class="flex items-center p-4 hover:bg-gray-50 group transition-colors">
-                    <div class="w-32 aspect-video rounded-lg overflow-hidden bg-gray-200 shrink-0 border border-gray-100 relative">
-                        <img src="${item.image}" class="w-full h-full object-cover">
-                    </div>
-                    <div class="ml-4 flex-1">
-                        <h3 class="text-sm font-bold text-gray-900 group-hover:text-primary transition-colors">${item.title}</h3>
-                        <a href="${item.buttonLink}" target="_blank" class="text-xs text-gray-400 hover:underline truncate block max-w-[200px]">${item.buttonLink}</a>
+                if (filter === 'active') items = items.filter(i => i.active);
+                if (filter === 'planned') items = items.filter(i => !i.active && i.startDate);
+
+                list.innerHTML = items.map(item => `
+                    <div class="flex items-center p-4 hover:bg-gray-50 group transition-colors">
+                        <div class="w-24 aspect-video rounded-lg overflow-hidden bg-gray-200 shrink-0 border border-gray-100 relative">
+                            <img src="${item.image}" class="w-full h-full object-cover">
+                        </div>
+                        <div class="ml-4 flex-1">
+                            <h3 class="text-sm font-bold text-gray-900 group-hover:text-primary transition-colors">${item.title}</h3>
+                            <div class="flex items-center gap-4 mt-1">
+                                <div class="flex items-center gap-1 text-[10px] text-gray-500 font-medium">
+                                    <span class="material-symbols-outlined text-[14px]">calendar_today</span>
+                                    ${item.startDate || '-'}
+                                </div>
+                                <div class="flex items-center gap-1 text-[10px] text-gray-500 font-medium">
+                                    <span class="material-symbols-outlined text-[14px]">touch_app</span>
+                                    ${item.clicks || 0} tıklama
+                                </div>
+                            </div>
+                        </div>
                         
-                        <div class="flex items-center gap-4 mt-2">
-                            <div class="flex items-center gap-1 text-[10px] text-gray-500 font-medium">
-                                <span class="material-symbols-outlined text-[14px]">calendar_today</span>
-                                ${item.startDate || '-'} - ${item.endDate || '-'}
-                            </div>
-                            <div class="flex items-center gap-1 text-[10px] text-gray-500 font-medium">
-                                <span class="material-symbols-outlined text-[14px]">touch_app</span>
-                                ${item.clicks || 0} tıklama
+                        <div class="flex items-center gap-4">
+                            ${getStatusBadge(item)}
+                            <div class="flex items-center gap-1 text-gray-300">
+                                <button onclick="window.editItem(${item.id})" class="p-2 hover:bg-white hover:text-blue-500 hover:shadow-sm rounded-full transition-all"><span class="material-symbols-outlined text-[18px]">edit</span></button>
+                                <button onclick="window.delItem(${item.id})" class="p-2 hover:bg-white hover:text-red-500 hover:shadow-sm rounded-full transition-all"><span class="material-symbols-outlined text-[18px]">delete</span></button>
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="flex items-center gap-4">
-                        ${getStatusBadge(item)}
-                        <div class="flex items-center gap-1 text-gray-300">
-                             <button onclick="window.editCampaign(${item.id})" class="p-2 hover:bg-white hover:text-blue-500 hover:shadow-sm rounded-full transition-all"><span class="material-symbols-outlined text-[18px]">edit</span></button>
-                             <button onclick="window.delCampaign(${item.id})" class="p-2 hover:bg-white hover:text-red-500 hover:shadow-sm rounded-full transition-all"><span class="material-symbols-outlined text-[18px]">delete</span></button>
+                `).join('');
+            } else {
+                list.classList.add('hidden');
+                annList.classList.remove('hidden');
+                let items = getAnnouncements();
+
+                annList.innerHTML = items.map(item => `
+                    <div class="flex items-center p-4 hover:bg-gray-50 group transition-colors">
+                        <div class="w-10 h-10 rounded-lg bg-blue-50 text-blue-500 flex items-center justify-center shrink-0">
+                            <span class="material-symbols-outlined">campaign</span>
+                        </div>
+                        <div class="ml-4 flex-1">
+                            <p class="text-sm font-medium text-gray-900 line-clamp-2">${item.text}</p>
+                            <div class="text-[10px] text-gray-400 mt-1 uppercase font-bold tracking-wider">${item.type}</div>
+                        </div>
+                        
+                        <div class="flex items-center gap-4">
+                            ${item.active ? '<span class="bg-green-100 text-green-700 text-[10px] font-bold px-2 py-1 rounded-full">Aktif</span>' : '<span class="bg-gray-100 text-gray-500 text-[10px] font-bold px-2 py-1 rounded-full">Pasif</span>'}
+                            <div class="flex items-center gap-1 text-gray-300">
+                                <button onclick="window.editItem(${item.id})" class="p-2 hover:bg-white hover:text-blue-500 hover:shadow-sm rounded-full transition-all"><span class="material-symbols-outlined text-[18px]">edit</span></button>
+                                <button onclick="window.delItem(${item.id})" class="p-2 hover:bg-white hover:text-red-500 hover:shadow-sm rounded-full transition-all"><span class="material-symbols-outlined text-[18px]">delete</span></button>
+                            </div>
                         </div>
                     </div>
-                </div>
-            `).join('');
+                `).join('');
+            }
         }
 
         function getStatusBadge(item) {
@@ -288,27 +322,56 @@
 
         // --- Weekly Products Logic ---
 
+        window.switchManagementView = (mode) => {
+            currentManagementMode = mode;
+            const btns = document.querySelectorAll('.tab-btn');
+
+            // Toggle visual state of tabs
+            if (mode === 'banners') {
+                btns[0].className = "px-4 py-1.5 rounded-md text-sm font-bold bg-white shadow-sm text-gray-900 tab-btn";
+                btns[1].className = "px-4 py-1.5 rounded-md text-sm font-bold text-gray-500 hover:text-gray-900 tab-btn";
+                btns[2].className = "px-4 py-1.5 rounded-md text-sm font-bold text-gray-500 hover:text-gray-900 tab-btn";
+
+                document.getElementById('formTitle').innerText = 'Banner Oluştur';
+                document.getElementById('formIcon').innerText = 'add_photo_alternate';
+            } else {
+                btns[0].className = "px-4 py-1.5 rounded-md text-sm font-bold text-gray-500 hover:text-gray-900 tab-btn";
+                btns[1].className = "px-4 py-1.5 rounded-md text-sm font-bold bg-white shadow-sm text-gray-900 tab-btn";
+                btns[2].className = "px-4 py-1.5 rounded-md text-sm font-bold text-gray-500 hover:text-gray-900 tab-btn";
+
+                document.getElementById('formTitle').innerText = 'Duyuru Oluştur';
+                document.getElementById('formIcon').innerText = 'campaign';
+            }
+
+            // Switch content view
+            document.getElementById('campaignList').classList.toggle('hidden', mode !== 'banners');
+            document.getElementById('announcementList').classList.toggle('hidden', mode !== 'announcements');
+            document.getElementById('weeklyProductsView').classList.add('hidden');
+
+            renderList();
+        }
+
         window.switchView = (view) => {
-            const list = document.getElementById('campaignList');
+            const listContainer = document.getElementById('campaignContent');
             const productsView = document.getElementById('weeklyProductsView');
             const btns = document.querySelectorAll('.tab-btn');
 
             if (view === 'products') {
-                list.classList.add('hidden');
+                document.getElementById('campaignList').classList.add('hidden');
+                document.getElementById('announcementList').classList.add('hidden');
                 productsView.classList.remove('hidden');
                 renderWeeklyProducts();
                 renderAvailableProducts();
 
                 // Update tabs
-                btns[0].className = "px-4 py-1.5 rounded-md text-sm font-bold text-gray-500 hover:text-gray-900 tab-btn";
-                btns[1].className = "px-4 py-1.5 rounded-md text-sm font-bold bg-white shadow-sm text-gray-900 tab-btn";
+                btns[0].classList.remove('bg-white', 'shadow-sm', 'text-gray-900');
+                btns[0].classList.add('text-gray-500');
+                btns[1].classList.remove('bg-white', 'shadow-sm', 'text-gray-900');
+                btns[1].classList.add('text-gray-500');
+                btns[2].className = "px-4 py-1.5 rounded-md text-sm font-bold bg-white shadow-sm text-gray-900 tab-btn";
             } else {
-                list.classList.remove('hidden');
                 productsView.classList.add('hidden');
-                filterCampaigns('all'); // Reset to all
-
-                btns[0].className = "px-4 py-1.5 rounded-md text-sm font-bold bg-white shadow-sm text-gray-900 tab-btn";
-                btns[1].className = "px-4 py-1.5 rounded-md text-sm font-bold text-gray-500 hover:text-gray-900 tab-btn";
+                window.switchManagementView(currentManagementMode);
             }
         };
 
@@ -379,39 +442,67 @@
             const data = Object.fromEntries(new FormData(form));
             data.active = form.active.checked;
 
-            // Fix: Don't reset clicks on edit
-            if (data.id) {
-                // Determine clicks from existing item to preserve it
-                const existing = getSliders().find(s => s.id == data.id);
-                data.clicks = existing ? existing.clicks : 0;
-                updateSlider(data.id, data);
+            if (currentManagementMode === 'banners') {
+                if (data.id) {
+                    const existing = getSliders().find(s => s.id == data.id);
+                    data.clicks = existing ? existing.clicks : 0;
+                    data.type = 'banner';
+                    updateSlider(data.id, data);
+                } else {
+                    delete data.id;
+                    data.clicks = 0;
+                    data.type = 'banner';
+                    addSlider(data);
+                }
             } else {
-                delete data.id;
-                data.clicks = 0; // Init for new
-                addSlider(data);
+                // For announcements, we use 'title' field as the text content for the form mapping
+                const annData = {
+                    text: data.title,
+                    active: data.active,
+                    type: 'info'
+                };
+                if (data.id) {
+                    updateAnnouncement(data.id, annData);
+                } else {
+                    addAnnouncement(annData);
+                }
             }
+
             renderList();
             renderStats();
             form.reset();
-            form.id.value = ''; // Ensure ID is cleared
+            form.id.value = '';
         });
 
-        window.editCampaign = (id) => {
-            const item = getSliders().find(s => s.id == id);
-            if (item) {
-                form.id.value = item.id;
-                form.title.value = item.title;
-                form.imgInput.value = item.image; // Corrected input ID
-                form.buttonLink.value = item.buttonLink;
-                form.startDate.value = item.startDate || '';
-                form.endDate.value = item.endDate || '';
-                form.active.checked = item.active;
+        window.editItem = (id) => {
+            if (currentManagementMode === 'banners') {
+                const item = getSliders().find(s => s.id == id);
+                if (item) {
+                    form.id.value = item.id;
+                    form.title.value = item.title;
+                    form.imgInput.value = item.image;
+                    form.buttonLink.value = item.buttonLink;
+                    form.startDate.value = item.startDate || '';
+                    form.endDate.value = item.endDate || '';
+                    form.active.checked = item.active;
+                }
+            } else {
+                const item = getAnnouncements().find(a => a.id == id);
+                if (item) {
+                    form.id.value = item.id;
+                    form.title.value = item.text;
+                    form.active.checked = item.active;
+                }
             }
         };
 
-        window.delCampaign = (id) => {
+        window.delItem = (id) => {
             if (confirm('Silmek istediğinize emin misiniz?')) {
-                deleteSlider(id);
+                if (currentManagementMode === 'banners') {
+                    deleteSlider(id);
+                } else {
+                    deleteAnnouncement(id);
+                }
                 renderList();
                 renderStats();
             }
