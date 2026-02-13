@@ -92,3 +92,11 @@ export function getNextProductId() {
     const products = getProducts();
     return products.length > 0 ? Math.max(...products.map((p) => p.id)) + 1 : 1;
 }
+export function getBestSellers(limit = 8) {
+    return getProducts()
+        .sort((a, b) => {
+            if (b.reviews !== a.reviews) return b.reviews - a.reviews;
+            return b.rating - a.rating;
+        })
+        .slice(0, limit);
+}
