@@ -16,52 +16,79 @@ export function renderHeader() {
     */
 
     const header = document.createElement('header');
-    header.className = 'sticky top-0 z-50 bg-white border-b border-border-light shadow-sm';
+    header.className = 'sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-border-light shadow-sm transition-all duration-300';
     header.innerHTML = `
-        <div class="container mx-auto max-w-7xl px-6 md:px-12 lg:px-20 flex items-center justify-between py-3 gap-4">
-            <a href="index.html" class="flex items-center gap-2 shrink-0">
-                <span class="material-symbols-outlined text-primary text-3xl">nutrition</span>
+        <style>
+            .nav-link {
+                position: relative;
+                padding-bottom: 4px;
+            }
+            .nav-link::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 50%;
+                width: 0;
+                height: 2px;
+                background: #ec9213;
+                transition: all 0.3s ease;
+                transform: translateX(-50%);
+            }
+            .nav-link:hover::after {
+                width: 100%;
+            }
+            .nav-link.active::after {
+                width: 100%;
+            }
+        </style>
+        <div class="container mx-auto max-w-7xl px-6 md:px-12 lg:px-20 flex items-center justify-between py-4 gap-4">
+            <!-- Elegant Logo -->
+            <a href="index.html" class="flex items-center gap-3 group shrink-0">
+                <div class="bg-primary/10 p-2 rounded-xl group-hover:bg-primary/20 transition-colors">
+                    <span class="material-symbols-outlined text-primary text-3xl transition-transform group-hover:scale-110">nutrition</span>
+                </div>
                 <div class="flex flex-col">
-                    <h2 class="text-xl font-bold leading-none tracking-tight text-text-main">HAKTAN</h2>
-                    <span class="text-xs text-text-muted font-medium tracking-wide">Kuruyemiş Şarküteri Sarayı</span>
+                    <h2 class="text-2xl font-black leading-none tracking-tight text-text-dark">HAKTAN</h2>
+                    <span class="text-[10px] text-text-muted font-bold uppercase tracking-[0.2em] mt-0.5">Gurme Market</span>
                 </div>
             </a>
             
             <!-- Mobile Menu Button -->
-            <button id="mobileMenuBtn" class="md:hidden text-text-main">
+            <button id="mobileMenuBtn" class="md:hidden text-text-dark p-2 rounded-lg hover:bg-gray-100 transition-colors">
                 <span class="material-symbols-outlined text-3xl">menu</span>
             </button>
 
-            <!-- Desktop Search -->
-            <div class="flex-1 max-w-xl mx-4 hidden md:block">
-                <div class="relative">
-                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-xl">search</span>
-                    <input id="searchInput" type="text" placeholder="Ürün, kategori veya marka ara..."
-                        class="w-full pl-10 pr-4 py-2.5 rounded-full border border-border-light bg-secondary text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all" />
+            <!-- Compact & Styled Search -->
+            <div class="flex-1 max-w-lg mx-8 hidden md:block">
+                <div class="relative group">
+                    <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors">search</span>
+                    <input id="searchInput" type="text" placeholder="Tatlı bir şeyler mi arıyorsun?..."
+                        class="w-full pl-11 pr-4 py-2.5 rounded-xl border border-border-light bg-gray-50/50 text-sm focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary focus:bg-white transition-all placeholder:text-gray-400" />
                 </div>
             </div>
 
-            <div class="flex items-center gap-4">
-                    <a href="shoping_page.html" class="flex items-center gap-2 text-text-main hover:text-primary transition-colors relative">
+            <!-- Header Actions -->
+            <div class="flex items-center gap-6">
+                <a href="shoping_page.html" class="group flex items-center gap-2 text-text-dark hover:text-primary transition-colors p-1.5 px-3 rounded-xl hover:bg-primary/5">
                     <div class="relative">
-                        <span class="material-symbols-outlined text-[26px]">shopping_cart</span>
-                        <span class="cart-count absolute -top-1.5 -right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white shadow-sm" style="display:none">0</span>
+                        <span class="material-symbols-outlined text-[28px]">shopping_bag</span>
+                        <span class="cart-count absolute -top-1.5 -right-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white shadow-lg ring-2 ring-white group-hover:scale-110 transition-transform" style="display:none">0</span>
                     </div>
                 </a>
             </div>
         </div>
         
-        <!-- Desktop Nav -->
-        <nav class="hidden md:flex w-full bg-white border-t border-border-light justify-center">
-            <div class="container mx-auto max-w-7xl px-6 md:px-12 lg:px-20 overflow-x-auto">
-                <ul class="flex items-center justify-between w-full py-3 text-sm font-semibold whitespace-nowrap text-text-main">
-                    <li><a class="hover:text-primary pb-0.5 transition-all" href="index.html">Ana Sayfa</a></li>
-                    <li><a class="hover:text-primary pb-0.5 transition-all" href="product_category.html?cat=kuruyemis">Kuruyemiş</a></li>
-                    <li><a class="hover:text-primary pb-0.5 transition-all" href="product_category.html?cat=sarkuteri">Şarküteri</a></li>
-                    <li><a class="hover:text-primary pb-0.5 transition-all" href="product_category.html?cat=aktar">Aktar</a></li>
-                    <li><a class="hover:text-primary pb-0.5 transition-all" href="product_category.html?cat=bakliyat">Bakliyat</a></li>
-                    <li><a class="hover:text-primary pb-0.5 transition-all" href="product_category.html?cat=pestil-kome">Pestil & Köme</a></li>
-                    <li><a class="hover:text-primary pb-0.5 transition-all" href="product_category.html?cat=yoresel">Yöresel Ürünler</a></li>
+        <!-- Refined Desktop Nav -->
+        <nav class="hidden md:flex w-full bg-white/50 border-t border-border-light/50 justify-center">
+            <div class="container mx-auto max-w-7xl px-6 md:px-12 lg:px-20">
+                <ul class="flex items-center justify-center gap-10 py-3.5 text-xs font-bold uppercase tracking-widest text-text-dark/80">
+                    <li><a class="nav-link hover:text-primary transition-colors" href="index.html">Ana Sayfa</a></li>
+                    <li><a class="nav-link hover:text-primary transition-colors" href="product_category.html?cat=kuruyemis">Kuruyemiş</a></li>
+                    <li><a class="nav-link hover:text-primary transition-colors" href="product_category.html?cat=sarkuteri">Şarküteri</a></li>
+                    <li><a class="nav-link hover:text-primary transition-colors" href="product_category.html?cat=aktar">Aktar</a></li>
+                    <li><a class="nav-link hover:text-primary transition-colors" href="product_category.html?cat=bakliyat">Bakliyat</a></li>
+                    <li><a class="nav-link hover:text-primary transition-colors" href="product_category.html?cat=pestil-kome">Pestil & Köme</a></li>
+                    <li><a class="nav-link hover:text-primary transition-colors" href="product_category.html?cat=yoresel">Yöresel</a></li>
                 </ul>
             </div>
         </nav>

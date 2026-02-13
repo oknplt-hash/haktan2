@@ -20,8 +20,8 @@
 <body class="bg-white text-text-main font-display min-h-screen flex flex-col">
     <!-- Header injected by main.js -->
 
-    <main class="flex-1 container mx-auto px-6 md:px-12 lg:px-20 py-8 max-w-7xl">
-        <nav class="text-sm text-text-muted mb-8 flex items-center gap-2">
+    <main class="flex-1 container mx-auto px-4 md:px-12 lg:px-20 py-4 lg:py-8 max-w-7xl">
+        <nav class="text-xs text-text-muted mb-4 flex items-center gap-1.5">
             <a href="index.html" class="hover:text-primary">Ana Sayfa</a>
             <span class="material-symbols-outlined text-[14px]">chevron_right</span>
             <a href="#" id="crumbCategory" class="hover:text-primary">Kategori</a>
@@ -29,7 +29,7 @@
             <span id="crumbProduct" class="text-text-main font-semibold">Ürün</span>
         </nav>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 mb-16">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
             <div class="space-y-4">
                 <div
                     class="aspect-square bg-gray-50 rounded-2xl overflow-hidden border border-border-light relative group">
@@ -44,7 +44,7 @@
                 <div class="mb-6 border-b border-border-light pb-6">
                     <a href="#" id="productCategoryLink"
                         class="text-primary text-sm font-bold uppercase tracking-wider mb-2 block"></a>
-                    <h1 id="productName" class="text-3xl md:text-4xl font-black text-text-main mb-3 leading-tight"></h1>
+                    <h1 id="productName" class="text-2xl md:text-3xl font-black text-text-main mb-2 leading-tight"></h1>
                     <div class="flex items-center gap-4 mb-4">
                         <div class="flex items-center gap-1" id="starRating"></div>
                         <a href="#reviews"
@@ -57,7 +57,7 @@
                     <p id="productDescription" class="text-text-muted leading-relaxed mb-6"></p>
                     <div class="flex items-end gap-3 mb-6">
                         <span id="oldPrice" class="text-gray-400 text-xl line-through hidden"></span>
-                        <span id="currentPrice" class="text-primary text-4xl font-black"></span>
+                        <span id="currentPrice" class="text-primary text-3xl font-black"></span>
                         <span class="text-text-muted text-sm mb-1.5 font-medium ml-1">/ <span id="weight"></span></span>
                     </div>
 
@@ -99,8 +99,8 @@
             </div>
         </div>
 
-        <section class="border-t border-border-light pt-12">
-            <h2 class="text-2xl font-black text-text-main mb-8">Benzer Ürünler</h2>
+        <section class="border-t border-border-light pt-8">
+            <h2 class="text-2xl font-black text-text-main mb-6">Benzer Ürünler</h2>
             <div id="relatedGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"></div>
         </section>
     </main>

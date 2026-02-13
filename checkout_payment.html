@@ -20,14 +20,14 @@
 <body class="bg-background-light text-text-main font-display min-h-screen flex flex-col">
     <!-- Header injected by main.js -->
 
-    <main class="flex-1 container mx-auto px-6 md:px-12 lg:px-20 py-8 max-w-4xl">
-        <h1 class="text-3xl font-black mb-8 text-center">Ödeme ve Teslimat</h1>
+    <main class="flex-1 container mx-auto px-4 md:px-12 lg:px-20 py-4 lg:py-8 max-w-4xl">
+        <h1 class="text-2xl font-black mb-6 text-center">Ödeme ve Teslimat</h1>
 
         <div class="flex flex-col md:flex-row gap-8">
             <div class="flex-1">
-                <form id="checkoutForm" class="space-y-6">
-                    <div class="bg-white p-6 rounded-2xl border border-border-light shadow-sm">
-                        <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+                <form id="checkoutForm" class="space-y-4">
+                    <div class="bg-white p-4 md:p-5 rounded-2xl border border-border-light shadow-sm">
+                        <h2 class="text-lg font-bold mb-3 flex items-center gap-2">
                             <span class="material-symbols-outlined text-primary">person</span> Kişisel Bilgiler
                         </h2>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -42,8 +42,8 @@
                         </div>
                     </div>
 
-                    <div class="bg-white p-6 rounded-2xl border border-border-light shadow-sm">
-                        <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+                    <div class="bg-white p-4 md:p-5 rounded-2xl border border-border-light shadow-sm">
+                        <h2 class="text-lg font-bold mb-3 flex items-center gap-2">
                             <span class="material-symbols-outlined text-primary">home</span> Teslimat Adresi
                         </h2>
                         <div class="space-y-4">
@@ -59,8 +59,8 @@
                         </div>
                     </div>
 
-                    <div class="bg-white p-6 rounded-2xl border border-border-light shadow-sm">
-                        <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+                    <div class="bg-white p-4 md:p-5 rounded-2xl border border-border-light shadow-sm">
+                        <h2 class="text-lg font-bold mb-3 flex items-center gap-2">
                             <span class="material-symbols-outlined text-primary">credit_card</span> Ödeme Yöntemi
                         </h2>
                         <div class="space-y-3">
@@ -126,9 +126,9 @@
                 </form>
             </div>
 
-            <div class="w-full md:w-80 shrink-0">
-                <div class="bg-card-light border border-border-light rounded-2xl p-6 shadow-sm sticky top-28">
-                    <h2 class="text-xl font-bold mb-6 pb-4 border-b border-border-light">Sipariş Özeti</h2>
+            <div class="w-full md:w-72 shrink-0">
+                <div class="bg-card-light border border-border-light rounded-2xl p-5 shadow-sm sticky top-24">
+                    <h2 class="text-lg font-bold mb-4 pb-3 border-b border-border-light">Sipariş Özeti</h2>
                     <div id="checkoutItems" class="space-y-3 mb-6 max-h-60 overflow-y-auto custom-scrollbar"></div>
                     <div class="space-y-2 mb-6 text-sm">
                         <div class="flex justify-between"><span class="text-text-secondary">Ara Toplam</span><span
