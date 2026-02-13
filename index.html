@@ -138,8 +138,14 @@
                     <!-- Injected via JS -->
                 </div>
 
-                <div id="heroSliderContainer" class="relative w-full h-full overflow-hidden">
+                <div id="heroSliderContainer" class="relative w-full h-full overflow-hidden bg-[#1a1510] shadow-inner"
+                    style="min-height: 280px;">
                     <!-- Slides injected via JS -->
+                    <div id="heroFallback"
+                        class="absolute inset-0 flex flex-col items-center justify-center text-white/10 italic">
+                        <span class="material-symbols-outlined text-4xl mb-2">image_search</span>
+                        Yükleniyor...
+                    </div>
                 </div>
 
                 <!-- Navigation Arrows -->
@@ -167,65 +173,80 @@
                     var progress = document.getElementById('catProgress');
 
                     function init() {
-                        const sliders = HaktanApp.getSliders().filter(s => s.active);
-                        const announcement = HaktanApp.getActiveAnnouncement();
+                        try {
+                            if (!window.HaktanApp || !window.HaktanApp.getSliders) {
+                                console.log("HaktanApp: Waiting for dependencies...");
+                                return;
+                            }
 
-                        // Render Announcement
-                        if (announcement) {
-                            announcementBar.innerHTML = `
-                                <div class="bg-black/40 backdrop-blur-xl border border-white/20 rounded-full px-6 py-2.5 flex items-center justify-between gap-4 shadow-2xl">
-                                    <div class="flex items-center gap-3 text-white">
-                                        <span class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white shadow-lg">
-                                            <span class="material-symbols-outlined text-[18px]">notifications_active</span>
-                                        </span>
-                                        <p class="text-[13px] font-bold tracking-tight">${announcement.text}</p>
-                                    </div>
-                                    <button onclick="this.parentElement.parentElement.style.opacity='0';setTimeout(()=>this.parentElement.parentElement.remove(),500)" class="text-white/40 hover:text-white transition-colors">
-                                        <span class="material-symbols-outlined text-[18px]">close</span>
-                                    </button>
-                                </div>
-                            `;
-                            setTimeout(() => {
-                                announcementBar.classList.remove('opacity-0', '-translate-y-4');
-                            }, 500);
-                        }
+                            const allSliders = HaktanApp.getSliders();
+                            const sliders = allSliders.filter(s => s.active);
+                            const announcement = HaktanApp.getActiveAnnouncement();
 
-                        // Render Sliders
-                        total = sliders.length;
-                        if (total === 0) {
-                            console.warn("HaktanApp: No active sliders found. Retrying in 500ms...");
-                            setTimeout(init, 500);
-                            return;
-                        }
+                            console.log("HaktanApp: Hero initialized with " + sliders.length + " sliders.");
 
-                        slider.innerHTML = sliders.map((s, idx) => `
-                            <div class="cat-slide ${idx === 0 ? 'active' : ''}">
-                                <div style="position:absolute;inset:0;background:url('${s.image}') center/cover no-repeat;"></div>
-                                <div style="position:absolute;inset:0;background:linear-gradient(135deg, rgba(30,20,10,0.85) 0%, rgba(30,20,10,0.5) 50%, rgba(30,20,10,0.2) 100%);"></div>
-                                <div class="slide-content" style="position:absolute;inset:0;display:flex;align-items:center;padding:2rem 2.5rem;">
-                                    <div style="max-width:520px;">
-                                        ${s.tag ? `
-                                            <span style="display:inline-flex;align-items:center;gap:6px;background:rgba(236,146,19,0.2);border:1px solid rgba(236,146,19,0.4);color:#f5a623;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;padding:5px 14px;border-radius:20px;margin-bottom:16px;backdrop-filter:blur(4px);">
-                                                <span class="material-symbols-outlined" style="font-size:14px;">${s.icon || 'local_fire_department'}</span> 
-                                                ${s.tag}
+                            // Remove fallback
+                            const fallback = document.getElementById('heroFallback');
+                            if (fallback) fallback.remove();
+
+                            // Render Announcement
+                            if (announcement) {
+                                announcementBar.innerHTML = `
+                                    <div class="bg-black/60 backdrop-blur-xl border border-white/20 rounded-full px-6 py-2.5 flex items-center justify-between gap-4 shadow-2xl">
+                                        <div class="flex items-center gap-3 text-white">
+                                            <span class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white shadow-lg">
+                                                <span class="material-symbols-outlined text-[18px]">notifications_active</span>
                                             </span>
-                                        ` : ''}
-                                        <h2 style="font-size:clamp(1.5rem,3vw,2.2rem);font-weight:900;color:white;line-height:1.15;margin-bottom:12px;letter-spacing:-0.5px;">${s.title.replace(' ', '<br>')}</h2>
-                                        <p style="color:rgba(255,255,255,0.8);font-size:clamp(0.8rem,1.2vw,0.95rem);line-height:1.6;margin-bottom:24px;max-width:400px;">${s.subtitle}</p>
-                                        <a href="${s.buttonLink}" onclick="HaktanApp.updateSlider(${s.id}, {clicks: ${s.clicks + 1}})" style="display:inline-flex;align-items:center;gap:8px;background:#ec9213;color:white;padding:10px 24px;border-radius:10px;font-weight:700;font-size:0.9rem;text-decoration:none;transition:all 0.3s;box-shadow:0 4px 20px rgba(236,146,19,0.35);">
-                                            ${s.buttonText || 'Keşfet'}
-                                            <span class="material-symbols-outlined" style="font-size:18px;">arrow_forward</span>
-                                        </a>
+                                            <p class="text-[13px] font-bold tracking-tight">${announcement.text}</p>
+                                        </div>
+                                        <button onclick="this.parentElement.parentElement.style.opacity='0';setTimeout(()=>this.parentElement.parentElement.remove(),500)" class="text-white/40 hover:text-white transition-colors">
+                                            <span class="material-symbols-outlined text-[18px]">close</span>
+                                        </button>
+                                    </div>
+                                `;
+                                setTimeout(() => {
+                                    announcementBar.classList.remove('opacity-0', '-translate-y-4');
+                                }, 500);
+                            }
+
+                            // Render Sliders
+                            total = sliders.length;
+                            if (total === 0) {
+                                slider.innerHTML = '<div class="absolute inset-0 flex flex-col items-center justify-center text-white/30 italic p-10 text-center"><span class="material-symbols-outlined text-3xl mb-2">campaign</span>Şu an aktif bir kampanya bulunamadı.</div>';
+                                return;
+                            }
+
+                            slider.innerHTML = sliders.map((s, idx) => `
+                                <div class="cat-slide ${idx === 0 ? 'active' : ''}">
+                                    <div style="position:absolute;inset:0;background:url('${s.image}') center/cover no-repeat;background-color:#1a1510;"></div>
+                                    <div style="position:absolute;inset:0;background:linear-gradient(135deg, rgba(30,20,10,0.85) 0%, rgba(30,20,10,0.5) 50%, rgba(30,20,10,0.2) 100%);"></div>
+                                    <div class="slide-content" style="position:absolute;inset:0;display:flex;align-items:center;padding:2rem 2.5rem;">
+                                        <div style="max-width:520px;">
+                                            ${s.tag ? `
+                                                <span style="display:inline-flex;align-items:center;gap:6px;background:rgba(236,146,19,0.3);border:1px solid rgba(236,146,19,0.5);color:#f5a623;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;padding:5px 14px;border-radius:20px;margin-bottom:16px;backdrop-filter:blur(4px);">
+                                                    <span class="material-symbols-outlined" style="font-size:14px;">${s.icon || 'local_fire_department'}</span> 
+                                                    ${s.tag}
+                                                </span>
+                                            ` : ''}
+                                            <h2 style="font-size:clamp(1.5rem,3vw,2.2rem);font-weight:900;color:white;line-height:1.15;margin-bottom:12px;letter-spacing:-0.5px;">${(s.title || '').replace(' ', '<br>')}</h2>
+                                            <p style="color:rgba(255,255,255,0.8);font-size:clamp(0.8rem,1.2vw,0.95rem);line-height:1.6;margin-bottom:24px;max-width:400px;">${s.subtitle || ''}</p>
+                                            <a href="${s.buttonLink || '#'}" onclick="HaktanApp.updateSlider(${s.id}, {clicks: ${s.clicks + 1}})" style="display:inline-flex;align-items:center;gap:8px;background:#ec9213;color:white;padding:10px 24px;border-radius:10px;font-weight:700;font-size:0.9rem;text-decoration:none;transition:all 0.3s;box-shadow:0 10px 30px rgba(236,146,19,0.4);">
+                                                ${s.buttonText || 'Keşfet'}
+                                                <span class="material-symbols-outlined" style="font-size:18px;">arrow_forward</span>
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        `).join('');
+                            `).join('');
 
-                        dotsContainer.innerHTML = sliders.map((_, idx) => `
-                            <button class="cat-dot ${idx === 0 ? 'active' : ''}" onclick="catCarousel.goTo(${idx})"></button>
-                        `).join('');
+                            dotsContainer.innerHTML = sliders.map((_, idx) => `
+                                <button class="cat-dot ${idx === 0 ? 'active' : ''}" onclick="catCarousel.goTo(${idx})"></button>
+                            `).join('');
 
-                        resetProgress();
+                            resetProgress();
+                        } catch (e) {
+                            console.error("HaktanApp Hero Error:", e);
+                        }
                     }
 
                     function goTo(i) {
@@ -252,8 +273,17 @@
                     c.addEventListener('touchstart', function (e) { tx = e.changedTouches[0].screenX; clearTimeout(timer); cancelAnimationFrame(progressTimer); }, { passive: true });
                     c.addEventListener('touchend', function (e) { var d = e.changedTouches[0].screenX - tx; if (Math.abs(d) > 50) { d > 0 ? prev() : next(); } else { resetProgress(); } }, { passive: true });
 
-                    // Initialize after a small delay to ensure HaktanApp is ready
-                    setTimeout(init, 100);
+                    // Robust Polling for HaktanApp
+                    var checkAttempts = 0;
+                    function checkReady() {
+                        if (window.HaktanApp && window.HaktanApp.getSliders) {
+                            init();
+                        } else if (checkAttempts < 100) {
+                            checkAttempts++;
+                            setTimeout(checkReady, 50);
+                        }
+                    }
+                    checkReady();
 
                     return { goTo: goTo, next: next, prev: prev };
                 })();

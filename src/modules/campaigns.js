@@ -66,20 +66,26 @@ const DEFAULT_ANNOUNCEMENTS = [
     }
 ];
 
-// ---- Sliders ----
+const STORAGE_KEY_SLIDERS = "haktan_sliders_v4";
+const STORAGE_KEY_ANN = "haktan_announcements_v4";
 
 export function getSliders() {
-    let sliders = JSON.parse(localStorage.getItem("haktan_sliders_v3")); // Incremented version to force reset
-    if (!sliders || sliders.length === 0) {
-        console.log("HaktanApp: Initializing sliders with defaults...");
-        localStorage.setItem("haktan_sliders_v3", JSON.stringify(DEFAULT_SLIDERS));
+    try {
+        let sliders = JSON.parse(localStorage.getItem(STORAGE_KEY_SLIDERS));
+        if (!sliders || !Array.isArray(sliders) || sliders.length === 0) {
+            console.log("HaktanApp: Initializing Sliders (v4)...");
+            localStorage.setItem(STORAGE_KEY_SLIDERS, JSON.stringify(DEFAULT_SLIDERS));
+            return DEFAULT_SLIDERS;
+        }
+        return sliders;
+    } catch (e) {
+        console.error("HaktanApp: Error loading sliders:", e);
         return DEFAULT_SLIDERS;
     }
-    return sliders;
 }
 
 export function saveSliders(sliders) {
-    localStorage.setItem("haktan_sliders_v3", JSON.stringify(sliders));
+    localStorage.setItem(STORAGE_KEY_SLIDERS, JSON.stringify(sliders));
 }
 
 export function addSlider(slider) {
@@ -106,16 +112,22 @@ export function deleteSlider(id) {
 // ---- Announcements ----
 
 export function getAnnouncements() {
-    const announcements = JSON.parse(localStorage.getItem("haktan_announcements"));
-    if (!announcements) {
-        localStorage.setItem("haktan_announcements", JSON.stringify(DEFAULT_ANNOUNCEMENTS));
+    try {
+        let announcements = JSON.parse(localStorage.getItem(STORAGE_KEY_ANN));
+        if (!announcements || !Array.isArray(announcements) || announcements.length === 0) {
+            console.log("HaktanApp: Initializing Announcements (v4)...");
+            localStorage.setItem(STORAGE_KEY_ANN, JSON.stringify(DEFAULT_ANNOUNCEMENTS));
+            return DEFAULT_ANNOUNCEMENTS;
+        }
+        return announcements;
+    } catch (e) {
+        console.error("HaktanApp: Error loading announcements:", e);
         return DEFAULT_ANNOUNCEMENTS;
     }
-    return announcements;
 }
 
 export function saveAnnouncements(list) {
-    localStorage.setItem("haktan_announcements", JSON.stringify(list));
+    localStorage.setItem(STORAGE_KEY_ANN, JSON.stringify(list));
 }
 
 export function addAnnouncement(item) {
