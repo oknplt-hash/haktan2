@@ -14,9 +14,21 @@
             opacity: 0;
             transition: opacity 0.3s ease-in-out;
         }
+
+        body.loaded {
+            opacity: 1;
+        }
+
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        .animate-marquee {
+            animation: marquee 20s linear infinite;
+        }
     </style>
-  <script type="module" crossorigin src="/assets/index-DyzopHCP.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/index-DXPxtxOP.css">
+  <script type="module" crossorigin src="/assets/index-DuN73RNf.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-DaL6pbfV.css">
 </head>
 
 <body
@@ -24,216 +36,433 @@
 
     <!-- Dynamic Header will be injected here by src/main.js -->
 
-    <main class="flex-1 flex flex-col container mx-auto max-w-[1440px]">
-        <section class="p-4 lg:p-6 w-full" id="hero-slider-container">
-            <!-- Dynamic Hero injected here -->
+    <main class="flex-1 flex flex-col container mx-auto max-w-7xl px-4 md:px-12 lg:px-20">
+        <section class="p-2 pt-0 lg:p-4 lg:pt-0 w-full" id="hero-slider-container">
+            <!-- ===== Category Hero Carousel ===== -->
+            <div id="categoryCarousel" class="relative w-full rounded-2xl overflow-hidden shadow-xl"
+                style="min-height: 340px;">
+                <style>
+                    .cat-slide {
+                        position: absolute;
+                        inset: 0;
+                        opacity: 0;
+                        transition: opacity 1s ease-in-out;
+                        z-index: 0;
+                    }
+                    .cat-slide.active {
+                        opacity: 1;
+                        z-index: 1;
+                    }
+                    .cat-dot {
+                        width: 10px;
+                        height: 10px;
+                        border-radius: 9999px;
+                        background: rgba(255, 255, 255, 0.45);
+                        border: 2px solid rgba(255, 255, 255, 0.6);
+                        cursor: pointer;
+                        transition: all 0.3s ease;
+                    }
+                    .cat-dot.active {
+                        background: #ec9213;
+                        border-color: #ec9213;
+                        width: 28px;
+                    }
+                    .cat-progress {
+                        position: absolute;
+                        bottom: 0;
+                        left: 0;
+                        height: 3px;
+                        background: linear-gradient(90deg, #ec9213, #f5a623);
+                        z-index: 10;
+                        transition: width 0.1s linear;
+                    }
+                    .cat-slide .slide-content {
+                        transform: translateY(30px);
+                        opacity: 0;
+                        transition: all 0.8s ease 0.3s;
+                    }
+                    .cat-slide.active .slide-content {
+                        transform: translateY(0);
+                        opacity: 1;
+                    }
+                    .cat-arrow {
+                        position: absolute;
+                        top: 50%;
+                        transform: translateY(-50%);
+                        z-index: 5;
+                        width: 44px;
+                        height: 44px;
+                        border-radius: 50%;
+                        background: rgba(255, 255, 255, 0.15);
+                        backdrop-filter: blur(8px);
+                        border: 1px solid rgba(255, 255, 255, 0.25);
+                        color: white;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        cursor: pointer;
+                        transition: all 0.3s ease;
+                        opacity: 0;
+                    }
+                    #categoryCarousel:hover .cat-arrow {
+                        opacity: 1;
+                    }
+                    .cat-arrow:hover {
+                        background: rgba(236, 146, 19, 0.85);
+                        border-color: rgba(236, 146, 19, 0.9);
+                        transform: translateY(-50%) scale(1.1);
+                    }
+                    .cat-arrow.left { left: 16px; }
+                    .cat-arrow.right { right: 16px; }
+                    @media (max-width: 768px) {
+                        #categoryCarousel { min-height: 280px; }
+                        .cat-arrow { opacity: 1; width: 36px; height: 36px; }
+                    }
+                </style>
+                <div id="heroSliderContainer" class="relative w-full h-full overflow-hidden bg-[#1a1510] shadow-inner"
+                    style="min-height: 340px;">
+                    <!-- Slides injected via JS -->
+                    <div id="heroFallback"
+                        class="absolute inset-0 flex flex-col items-center justify-center text-white/10 italic">
+                        <span class="material-symbols-outlined text-4xl mb-2">image_search</span>
+                        Yükleniyor...
+                    </div>
+                </div>
+
+                <!-- Navigation Arrows -->
+                <button class="cat-arrow left" onclick="catCarousel.prev()"><span
+                        class="material-symbols-outlined">chevron_left</span></button>
+                <button class="cat-arrow right" onclick="catCarousel.next()"><span
+                        class="material-symbols-outlined">chevron_right</span></button>
+
+                <!-- Dot Indicators -->
+                <div id="heroDotsContainer"
+                    style="position:absolute;bottom:20px;left:50%;transform:translateX(-50%);z-index:5;display:flex;gap:8px;align-items:center;">
+                    <!-- Dots injected via JS -->
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="cat-progress" id="catProgress"></div>
+            </div>
+
+            <script>
+                var catCarousel = (function () {
+                    var slider = document.getElementById('heroSliderContainer');
+                    var dotsContainer = document.getElementById('heroDotsContainer');
+                    var current = 0, total = 0, interval = 5000, timer = null, progressTimer = null, progressStart = 0;
+                    var progress = document.getElementById('catProgress');
+
+                    function init() {
+                        try {
+                            if (!window.HaktanApp || !window.HaktanApp.getSliders) {
+                                console.log("HaktanApp: Waiting for dependencies...");
+                                return;
+                            }
+
+                            const allSliders = HaktanApp.getSliders();
+                            const sliders = allSliders.filter(s => s.active);
+                            const announcement = HaktanApp.getActiveAnnouncement();
+
+                            console.log("HaktanApp: Hero initialized with " + sliders.length + " sliders.");
+
+                            // Remove fallback
+                            const fallback = document.getElementById('heroFallback');
+                            if (fallback) fallback.remove();
+
+                            // Render Sliders
+                            total = sliders.length;
+                            if (total === 0) {
+                                slider.innerHTML = '<div class="absolute inset-0 flex flex-col items-center justify-center text-white/30 italic p-10 text-center"><span class="material-symbols-outlined text-3xl mb-2">campaign</span>Şu an aktif bir kampanya bulunamadı.</div>';
+                                return;
+                            }
+
+                            slider.innerHTML = sliders.map((s, idx) => `
+                                <div class="cat-slide ${idx === 0 ? 'active' : ''}">
+                                    <div style="position:absolute;inset:0;background:url('${s.image}') center/cover no-repeat;background-color:#1a1510;"></div>
+                                    <div style="position:absolute;inset:0;background:linear-gradient(135deg, rgba(30,20,10,0.85) 0%, rgba(30,20,10,0.5) 50%, rgba(30,20,10,0.2) 100%);"></div>
+                                    <div class="slide-content" style="position:absolute;inset:0;display:flex;align-items:center;padding:2rem 2.5rem;">
+                                        <div style="max-width:520px;">
+                                            ${s.tag ? `
+                                                <span style="display:inline-flex;align-items:center;gap:6px;background:rgba(236,146,19,0.3);border:1px solid rgba(236,146,19,0.5);color:#f5a623;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;padding:5px 14px;border-radius:20px;margin-bottom:16px;backdrop-filter:blur(4px);">
+                                                    <span class="material-symbols-outlined" style="font-size:14px;">${s.icon || 'local_fire_department'}</span> 
+                                                    ${s.tag}
+                                                </span>
+                                            ` : ''}
+                                            <h2 style="font-size:clamp(1.5rem,3vw,2.2rem);font-weight:900;color:white;line-height:1.15;margin-bottom:12px;letter-spacing:-0.5px;">${(s.title || '').replace(' ', '<br>')}</h2>
+                                            <p style="color:rgba(255,255,255,0.8);font-size:clamp(0.8rem,1.2vw,0.95rem);line-height:1.6;margin-bottom:24px;max-width:400px;">${s.subtitle || ''}</p>
+                                            <a href="${s.buttonLink || '#'}" onclick="HaktanApp.updateSlider(${s.id}, {clicks: ${s.clicks + 1}})" style="display:inline-flex;align-items:center;gap:8px;background:#ec9213;color:white;padding:10px 24px;border-radius:10px;font-weight:700;font-size:0.9rem;text-decoration:none;transition:all 0.3s;box-shadow:0 10px 30px rgba(236,146,19,0.4);">
+                                                ${s.buttonText || 'Keşfet'}
+                                                <span class="material-symbols-outlined" style="font-size:18px;">arrow_forward</span>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('');
+
+                            dotsContainer.innerHTML = sliders.map((_, idx) => `
+                                <button class="cat-dot ${idx === 0 ? 'active' : ''}" onclick="catCarousel.goTo(${idx})"></button>
+                            `).join('');
+
+                            resetProgress();
+                        } catch (e) {
+                            console.error("HaktanApp Hero Error:", e);
+                        }
+                    }
+
+                    function goTo(i) {
+                        var slides = document.querySelectorAll('.cat-slide');
+                        var dots = document.querySelectorAll('.cat-dot');
+                        if (!slides.length) return;
+                        slides[current].classList.remove('active');
+                        dots[current].classList.remove('active');
+                        current = (i + total) % total;
+                        slides[current].classList.add('active');
+                        dots[current].classList.add('active');
+                        resetProgress();
+                    }
+
+                    function next() { goTo(current + 1); }
+                    function prev() { goTo(current - 1); }
+                    function resetProgress() { clearTimeout(timer); cancelAnimationFrame(progressTimer); progressStart = Date.now(); progress.style.width = '0%'; animateProgress(); timer = setTimeout(next, interval); }
+                    function animateProgress() { var pct = Math.min((Date.now() - progressStart) / interval * 100, 100); progress.style.width = pct + '%'; if (pct < 100) progressTimer = requestAnimationFrame(animateProgress); }
+
+                    var c = document.getElementById('categoryCarousel');
+                    c.addEventListener('mouseenter', function () { clearTimeout(timer); cancelAnimationFrame(progressTimer); });
+                    c.addEventListener('mouseleave', function () { resetProgress(); });
+                    var tx = 0;
+                    c.addEventListener('touchstart', function (e) { tx = e.changedTouches[0].screenX; clearTimeout(timer); cancelAnimationFrame(progressTimer); }, { passive: true });
+                    c.addEventListener('touchend', function (e) { var d = e.changedTouches[0].screenX - tx; if (Math.abs(d) > 50) { d > 0 ? prev() : next(); } else { resetProgress(); } }, { passive: true });
+
+                    // Robust Polling for HaktanApp
+                    var checkAttempts = 0;
+                    function checkReady() {
+                        if (window.HaktanApp && window.HaktanApp.getSliders) {
+                            init();
+                        } else if (checkAttempts < 100) {
+                            checkAttempts++;
+                            setTimeout(checkReady, 50);
+                        }
+                    }
+                    checkReady();
+
+                    return { goTo: goTo, next: next, prev: prev };
+                })();
+            </script>
         </section>
-        <section class="grid grid-cols-2 md:grid-cols-4 gap-4 px-6 pb-8 border-b border-border-light mb-8">
+        <section class="grid grid-cols-2 md:grid-cols-4 gap-3 px-4 pb-2 border-b border-border-light mb-1">
             <div
-                class="flex items-center gap-3 p-4 rounded-xl bg-section-bg border border-transparent hover:border-primary/20 transition-colors">
-                <span class="material-symbols-outlined text-primary text-3xl">local_shipping</span>
+                class="flex items-center gap-2 p-3 rounded-xl bg-section-bg border border-transparent hover:border-primary/20 transition-colors">
+                <span class="material-symbols-outlined text-primary text-2xl">local_shipping</span>
                 <div class="flex flex-col">
-                    <span class="text-text-dark font-bold text-sm">Hızlı Teslimat</span>
-                    <span class="text-text-muted text-xs">Aynı gün kargo</span>
+                    <span class="text-text-dark font-bold text-xs">Hızlı Teslimat</span>
+                    <span class="text-text-muted text-[10px]">Aynı gün kargo</span>
                 </div>
             </div>
             <div
-                class="flex items-center gap-3 p-4 rounded-xl bg-section-bg border border-transparent hover:border-primary/20 transition-colors">
-                <span class="material-symbols-outlined text-primary text-3xl">verified_user</span>
+                class="flex items-center gap-2 p-3 rounded-xl bg-section-bg border border-transparent hover:border-primary/20 transition-colors">
+                <span class="material-symbols-outlined text-primary text-2xl">verified_user</span>
                 <div class="flex flex-col">
-                    <span class="text-text-dark font-bold text-sm">Tazelik Garantisi</span>
-                    <span class="text-text-muted text-xs">Her zaman taze & lezzetli</span>
+                    <span class="text-text-dark font-bold text-xs">Tazelik Garantisi</span>
+                    <span class="text-text-muted text-[10px]">Taze & lezzetli</span>
                 </div>
             </div>
             <div
-                class="flex items-center gap-3 p-4 rounded-xl bg-section-bg border border-transparent hover:border-primary/20 transition-colors">
-                <span class="material-symbols-outlined text-primary text-3xl">workspace_premium</span>
+                class="flex items-center gap-2 p-3 rounded-xl bg-section-bg border border-transparent hover:border-primary/20 transition-colors">
+                <span class="material-symbols-outlined text-primary text-2xl">workspace_premium</span>
                 <div class="flex flex-col">
-                    <span class="text-text-dark font-bold text-sm">Üstün Kalite</span>
-                    <span class="text-text-muted text-xs">Özenle seçilmiş ürünler</span>
+                    <span class="text-text-dark font-bold text-xs">Üstün Kalite</span>
+                    <span class="text-text-muted text-[10px]">Özenle seçilmiş</span>
                 </div>
             </div>
             <div
-                class="flex items-center gap-3 p-4 rounded-xl bg-section-bg border border-transparent hover:border-primary/20 transition-colors">
-                <span class="material-symbols-outlined text-primary text-3xl">support_agent</span>
+                class="flex items-center gap-2 p-3 rounded-xl bg-section-bg border border-transparent hover:border-primary/20 transition-colors">
+                <span class="material-symbols-outlined text-primary text-2xl">support_agent</span>
                 <div class="flex flex-col">
-                    <span class="text-text-dark font-bold text-sm">7/24 Destek</span>
-                    <span class="text-text-muted text-xs">Size yardım için buradayız</span>
+                    <span class="text-text-dark font-bold text-xs">7/24 Destek</span>
+                    <span class="text-text-muted text-[10px]">Biz buradayız</span>
                 </div>
             </div>
         </section>
-        <section id="collections" class="px-4 py-8 lg:py-12 bg-white">
-            <div class="flex justify-between items-end mb-8 px-2">
-                <div>
-                    <h2 class="text-2xl lg:text-3xl font-black text-text-dark mb-2">Premium Koleksiyonlarımız</h2>
-                    <p class="text-text-muted font-medium">En seçkin lezzetleri kategorilere göre keşfedin</p>
+        <section id="collections" class="px-2 py-6 lg:py-10">
+            <div class="container mx-auto max-w-7xl">
+                <div class="flex flex-col md:flex-row justify-between items-center mb-8 px-2">
+                    <div class="flex items-center gap-3">
+                        <span class="w-8 h-[2px] bg-primary"></span>
+                        <div class="flex flex-col">
+                            <span class="text-primary font-bold text-sm uppercase tracking-widest">Kategorilerimiz</span>
+                            <span class="text-text-muted text-xs">Lezzet dünyasını keşfet</span>
+                        </div>
+                    </div>
+                    <a class="hidden md:flex items-center gap-2 text-[#ec9213] text-sm font-bold hover:underline transition-all"
+                        href="product_category.html">
+                        Tümünü Gör <span class="material-symbols-outlined text-sm font-bold">arrow_forward</span>
+                    </a>
                 </div>
-                <a class="hidden md:flex items-center gap-1 text-primary text-sm font-bold hover:underline"
-                    href="product_category.html">
-                    Tüm Kategoriler <span class="material-symbols-outlined text-sm">arrow_forward</span>
-                </a>
-            </div>
 
-            <!-- Updated Grid: 6 Columns on LG, 3 on MD, 2 on SM -->
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6 px-2">
+                    <!-- 1. Kuruyemiş -->
+                    <a href="product_category.html?cat=kuruyemis" class="category-card group">
+                        <div class="category-card-media">
+                            <div class="category-card-image"
+                                style="background-image: url('/assets/kuruyemis-CVnBvITz.png');">
+                            </div>
+                            <div class="category-card-glow"></div>
+                            <div class="category-card-ring"></div>
+                        </div>
+                        <div class="category-card-body">
+                            <h3 class="category-card-title">Kuruyemiş</h3>
+                            <span class="category-card-cta">Keşfet</span>
+                        </div>
+                    </a>
 
-                <!-- 1. Kuruyemiş -->
-                <a class="group relative overflow-hidden rounded-xl aspect-[3/4] shadow-md hover:shadow-xl transition-all duration-300"
-                    href="product_category.html?cat=kuruyemis">
-                    <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
-                        style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAeNPGn5ZKpT5u0ZMpP2iA8-sKnN_wT3qr1Rx7Vg01dFABezIlXgWmlI9EmM1UJGUclszCSP4YWPXWcKEWo59nAg4wt2uwiHt3alE4PtcCu0isSobI54dgh3Uw3r3Ugba_WYp6zfm1kwi1kSJYWJtDOAclFpoXSFBCGmepTM4qbBjZ93uljAG5W7cbNhwryg3-GQ59iAr3KVZrKb3D8mHJw2-PaorfHr5mvI2w_tR2QrJUzqUTMLmkvAMgFFY6HAzPe4Mbc005ED7M');">
-                    </div>
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
-                    <div class="absolute bottom-0 left-0 p-4 w-full">
-                        <h3
-                            class="text-lg font-bold text-white mb-0.5 group-hover:text-primary-light transition-colors">
-                            Kuruyemiş</h3>
-                        <p class="text-gray-300 text-xs font-medium">Taze Kavrulmuş</p>
-                    </div>
-                </a>
+                    <!-- 2. Aktar -->
+                    <a href="product_category.html?cat=aktar" class="category-card group">
+                        <div class="category-card-media">
+                            <div class="category-card-image"
+                                style="background-image: url('/assets/aktar-Bwv-5Ysn.png');">
+                            </div>
+                            <div class="category-card-glow"></div>
+                            <div class="category-card-ring"></div>
+                        </div>
+                        <div class="category-card-body">
+                            <h3 class="category-card-title">Aktar</h3>
+                            <span class="category-card-cta">Keşfet</span>
+                        </div>
+                    </a>
 
-                <!-- 2. Şarküteri -->
-                <a class="group relative overflow-hidden rounded-xl aspect-[3/4] shadow-md hover:shadow-xl transition-all duration-300"
-                    href="product_category.html?cat=sarkuteri">
-                    <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
-                        style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBH8VArVN6n-tDprj6IDSnMMJenTyMsneYlONbSgyLLQtLVqg2Zu1iToepDwvvJ-HvRMC0ZRgNQyvwduy48jJY9jFYknpURMheNX8BL63p1TSNsw7CvC4aDIBB04Y2zmmwNhjT9rSaBtbx2A2-VOO7gDHyJ8Pp4Ti4OrPfhRTQhnUATQXg7mnAKxhDz6_G2dzXLQJkO7QgSomHSgKs5KWuLreEVMmx1WJ8vRm7q-xa8PT1-rtgRUkI8IpJbvWgYpN9t9vTacy5xZZI');">
-                    </div>
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
-                    <div class="absolute bottom-0 left-0 p-4 w-full">
-                        <h3
-                            class="text-lg font-bold text-white mb-0.5 group-hover:text-primary-light transition-colors">
-                            Şarküteri</h3>
-                        <p class="text-gray-300 text-xs font-medium">Gurme Lezzetler</p>
-                    </div>
-                </a>
+                    <!-- 3. Bakliyat -->
+                    <a href="product_category.html?cat=bakliyat" class="category-card group">
+                        <div class="category-card-media">
+                            <div class="category-card-image"
+                                style="background-image: url('/assets/bakliyat-D8YDy4ki.jpg');">
+                            </div>
+                            <div class="category-card-glow"></div>
+                            <div class="category-card-ring"></div>
+                        </div>
+                        <div class="category-card-body">
+                            <h3 class="category-card-title">Bakliyat</h3>
+                            <span class="category-card-cta">Keşfet</span>
+                        </div>
+                    </a>
 
-                <!-- 3. Aktar -->
-                <a class="group relative overflow-hidden rounded-xl aspect-[3/4] shadow-md hover:shadow-xl transition-all duration-300"
-                    href="product_category.html?cat=aktar">
-                    <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
-                        style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAQJC22B122cg_g0zbJ1XGhfxg0JsvL3V9ksOAUBP-4e2pjSbwpBqV7vtayhkVTFco4-FSlsinxkCuzjShevJs3-FHc5MW1abKoPFLNhkBc_Zbz6sOOIQJM7HYygoiaoUGfeGeU7-LnMmD2hd8mvgbWTa62Q7TS5ese8KUDLyJYvY6jwIjg6n9HKAI4p_vyEPoTMQOpvMFVKNe_4G5VXBTMrt3ZJURgGGAflv5O89IW8JUBdeloUXWbMd4B9ytdlc251FAfXvx7HzM');">
-                    </div>
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
-                    <div class="absolute bottom-0 left-0 p-4 w-full">
-                        <h3
-                            class="text-lg font-bold text-white mb-0.5 group-hover:text-primary-light transition-colors">
-                            Aktar</h3>
-                        <p class="text-gray-300 text-xs font-medium">Şifalı Bitkiler</p>
-                    </div>
-                </a>
+                    <!-- 4. Pestil & Köme -->
+                    <a href="product_category.html?cat=pestil" class="category-card group">
+                        <div class="category-card-media">
+                            <div class="category-card-image"
+                                style="background-image: url('/assets/pestilkome-Bvwx5G4G.jpg');">
+                            </div>
+                            <div class="category-card-glow"></div>
+                            <div class="category-card-ring"></div>
+                        </div>
+                        <div class="category-card-body">
+                            <h3 class="category-card-title">Pestil & Köme</h3>
+                            <span class="category-card-cta">Keşfet</span>
+                        </div>
+                    </a>
 
-                <!-- 4. Bakliyat (New) -->
-                <a class="group relative overflow-hidden rounded-xl aspect-[3/4] shadow-md hover:shadow-xl transition-all duration-300"
-                    href="product_category.html?cat=bakliyat">
-                    <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
-                        style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuC1_Y28S-cK9p9C7c2v3z0O6D8k4L7M5N9P1o2Q3R4S_T5U6V7W8X9Y0Z1a2B3c4D5e6F7g8H9i0J1k2L3m4N5o6P7q8R9s0T1u2V3w4X5y6Z7a8B9c0D1e2F3g4H5i6J7k8L9m0N1o2P3q4R5s6T7u8V9w0X1y2Z3a4B5c6');">
-                        <!-- Placeholder image URL, using one of the existing valid URLs or a new one to simulate visual diversity -->
-                        <!-- Using a generic food/grain like image from a reliable source would be better, but re-using one for simulation and then noting to user to update is standard. 
-                              Let's use a visibly different valid image from the set or a color placeholder if needed. 
-                              I will use the "Aktar" image with a filter or just a similar one for now to ensure it loads.
-                              Actually, I will use a reliable unsplash/placeholder for "Legumes" if I can, but keeping to "lh3" links implies internal assets.
-                              I will reuse the Şarküteri one for now but label it correctly, or ideally, use a real one.
-                              Let's use the first one again but distinct. 
-                              Actually, I'll use a placeholder from a standard library if possible? No, user wants specific style. 
-                              I will use the "Aktar" image but focused differently conceptually. 
-                              BETTER: I'll use the Kuruyemiş image but different crop? No. 
-                              I will use the same image as Aktar for Bakliyat for now as a placeholder, changing the title. 
-                              Wait, I can try to find if I used other images. 
-                              Let's just use the Aktar image for Bakliyat, and Şarküteri for Yöresel. Limiting distinct images availability.
-                         -->
-                    </div>
-                    <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
-                        style="background-image: url('https://images.unsplash.com/photo-1586201375761-83865001e31c?q=80&w=1000&auto=format&fit=crop');">
-                    </div>
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
-                    <div class="absolute bottom-0 left-0 p-4 w-full">
-                        <h3
-                            class="text-lg font-bold text-white mb-0.5 group-hover:text-primary-light transition-colors">
-                            Bakliyat</h3>
-                        <p class="text-gray-300 text-xs font-medium">Doğal & Yerli</p>
-                    </div>
-                </a>
+                    <!-- 5. Şarküteri -->
+                    <a href="product_category.html?cat=sarkuteri" class="category-card group">
+                        <div class="category-card-media">
+                            <div class="category-card-image"
+                                style="background-image: url('/assets/sarkuteri-D3XfMn-v.jpg');">
+                            </div>
+                            <div class="category-card-glow"></div>
+                            <div class="category-card-ring"></div>
+                        </div>
+                        <div class="category-card-body">
+                            <h3 class="category-card-title">Şarküteri</h3>
+                            <span class="category-card-cta">Keşfet</span>
+                        </div>
+                    </a>
 
-                <!-- 5. Pestil & Köme (New) -->
-                <a class="group relative overflow-hidden rounded-xl aspect-[3/4] shadow-md hover:shadow-xl transition-all duration-300"
-                    href="product_category.html?cat=pestil">
-                    <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
-                        style="background-image: url('https://images.unsplash.com/photo-1595981267035-7b04ca84a82d?q=80&w=1000&auto=format&fit=crop');">
-                    </div>
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
-                    <div class="absolute bottom-0 left-0 p-4 w-full">
-                        <h3
-                            class="text-lg font-bold text-white mb-0.5 group-hover:text-primary-light transition-colors">
-                            Pestil & Köme</h3>
-                        <p class="text-gray-300 text-xs font-medium">Geleneksel Tatlar</p>
-                    </div>
-                </a>
+                    <!-- 6. Yöresel Ürünler -->
+                    <a href="product_category.html?cat=yoresel" class="category-card group">
+                        <div class="category-card-media">
+                            <div class="category-card-image"
+                                style="background-image: url('/assets/yoresel-CvTSfk3l.png');">
+                            </div>
+                            <div class="category-card-glow"></div>
+                            <div class="category-card-ring"></div>
+                        </div>
+                        <div class="category-card-body">
+                            <h3 class="category-card-title">Yöresel</h3>
+                            <span class="category-card-cta">Keşfet</span>
+                        </div>
+                    </a>
+                </div>
 
-                <!-- 6. Yöresel Ürünler (New) -->
-                <a class="group relative overflow-hidden rounded-xl aspect-[3/4] shadow-md hover:shadow-xl transition-all duration-300"
-                    href="product_category.html?cat=yoresel">
-                    <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
-                        style="background-image: url('https://images.unsplash.com/photo-1627308595229-7830a5c91f9f?q=80&w=1000&auto=format&fit=crop');">
-                    </div>
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
-                    <div class="absolute bottom-0 left-0 p-4 w-full">
-                        <h3
-                            class="text-lg font-bold text-white mb-0.5 group-hover:text-primary-light transition-colors">
-                            Yöresel Ürünler</h3>
-                        <p class="text-gray-300 text-xs font-medium">Anadolu'dan</p>
-                    </div>
-                </a>
-
+                <!-- Mobile View All Button -->
+                <div class="mt-8 flex justify-center md:hidden">
+                    <a class="flex items-center gap-2 text-[#ec9213] text-sm font-bold hover:underline"
+                        href="product_category.html">
+                        Tüm Kategoriler <span class="material-symbols-outlined text-sm font-bold">arrow_forward</span>
+                    </a>
+                </div>
             </div>
         </section>
 
-        <!-- Campaign section maintained -->
-        <section
-            class="bg-section-bg py-12 lg:py-16 px-4 rounded-[2rem] mx-4 lg:mx-6 mb-12 relative overflow-hidden shadow-inner border border-border-light">
-            <!-- ... content ... -->
+        <!-- Best Sellers Section -->
+        <section class="py-12 px-6 bg-gray-50/50">
+            <div class="container mx-auto max-w-7xl">
+                <div class="flex flex-col md:flex-row justify-between items-end mb-10 px-2">
+                    <div class="text-center md:text-left w-full md:w-auto mb-6 md:mb-0">
+                        <div class="flex items-center gap-2 mb-2 justify-center md:justify-start">
+                            <span class="w-8 h-[2px] bg-primary"></span>
+                            <span class="text-primary font-bold text-sm uppercase tracking-widest">En Çok Tercih
+                                Edilenler</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="best-sellers-grid grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+                    id="bestSellersGrid">
+                    <!-- Skeleton Loaders -->
+                    <div class="bg-white rounded-2xl p-3 animate-pulse"><div class="aspect-[4/3] bg-gray-200 rounded-xl mb-3"></div><div class="h-3 bg-gray-200 rounded w-1/3 mb-2"></div><div class="h-4 bg-gray-200 rounded w-3/4 mb-2"></div><div class="h-3 bg-gray-200 rounded w-1/4"></div></div>
+                    <div class="bg-white rounded-2xl p-3 animate-pulse"><div class="aspect-[4/3] bg-gray-200 rounded-xl mb-3"></div><div class="h-3 bg-gray-200 rounded w-1/3 mb-2"></div><div class="h-4 bg-gray-200 rounded w-3/4 mb-2"></div><div class="h-3 bg-gray-200 rounded w-1/4"></div></div>
+                    <div class="bg-white rounded-2xl p-3 animate-pulse hidden lg:block"><div class="aspect-[4/3] bg-gray-200 rounded-xl mb-3"></div><div class="h-3 bg-gray-200 rounded w-1/3 mb-2"></div><div class="h-4 bg-gray-200 rounded w-3/4 mb-2"></div><div class="h-3 bg-gray-200 rounded w-1/4"></div></div>
+                    <div class="bg-white rounded-2xl p-3 animate-pulse hidden lg:block"><div class="aspect-[4/3] bg-gray-200 rounded-xl mb-3"></div><div class="h-3 bg-gray-200 rounded w-1/3 mb-2"></div><div class="h-4 bg-gray-200 rounded w-3/4 mb-2"></div><div class="h-3 bg-gray-200 rounded w-1/4"></div></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="py-6 lg:py-10 px-4 relative overflow-hidden">
             <div class="container mx-auto relative z-10">
-                <div class="flex flex-col md:flex-row justify-between items-center mb-10 gap-4">
+                <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
                     <div class="text-center md:text-left">
                         <div
-                            class="inline-block px-3 py-1 bg-red-100 text-red-600 rounded text-xs font-bold uppercase mb-3 border border-red-200">
+                            class="inline-block px-2 py-1 bg-red-50 text-red-600 rounded text-[10px] font-bold uppercase mb-2 border border-red-200">
                             Sınırlı Süre Fırsat</div>
-                        <h2 class="text-3xl lg:text-4xl font-black text-text-dark">Haftanın Kampanyaları</h2>
-                    </div>
-                    <div class="flex gap-2">
-                        <button id="campaignPrev"
-                            class="w-10 h-10 rounded-full border border-border-light bg-white flex items-center justify-center text-text-dark hover:bg-primary hover:border-primary hover:text-white transition-all shadow-sm">
-                            <span class="material-symbols-outlined">chevron_left</span>
-                        </button>
-                        <button id="campaignNext"
-                            class="w-10 h-10 rounded-full border border-border-light bg-white flex items-center justify-center text-text-dark hover:bg-primary hover:border-primary hover:text-white transition-all shadow-sm">
-                            <span class="material-symbols-outlined">chevron_right</span>
-                        </button>
+                        <h2 class="text-xl lg:text-2xl font-black text-text-dark">Haftanın Kampanyaları</h2>
                     </div>
                 </div>
-                <div class="campaign-carousel grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 overflow-x-auto scroll-smooth"
+                <div class="campaigns-grid grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-6"
                     id="weeklyCampaignsGrid">
-                    <!-- Dynamic Content -->
+                    <!-- Skeleton Loaders -->
+                    <div class="bg-white rounded-2xl p-3 animate-pulse"><div class="aspect-[4/3] bg-gray-200 rounded-xl mb-3"></div><div class="h-3 bg-gray-200 rounded w-1/3 mb-2"></div><div class="h-4 bg-gray-200 rounded w-3/4 mb-2"></div><div class="h-3 bg-gray-200 rounded w-1/4"></div></div>
+                    <div class="bg-white rounded-2xl p-3 animate-pulse"><div class="aspect-[4/3] bg-gray-200 rounded-xl mb-3"></div><div class="h-3 bg-gray-200 rounded w-1/3 mb-2"></div><div class="h-4 bg-gray-200 rounded w-3/4 mb-2"></div><div class="h-3 bg-gray-200 rounded w-1/4"></div></div>
+                    <div class="bg-white rounded-2xl p-3 animate-pulse hidden lg:block"><div class="aspect-[4/3] bg-gray-200 rounded-xl mb-3"></div><div class="h-3 bg-gray-200 rounded w-1/3 mb-2"></div><div class="h-4 bg-gray-200 rounded w-3/4 mb-2"></div><div class="h-3 bg-gray-200 rounded w-1/4"></div></div>
+                    <div class="bg-white rounded-2xl p-3 animate-pulse hidden lg:block"><div class="aspect-[4/3] bg-gray-200 rounded-xl mb-3"></div><div class="h-3 bg-gray-200 rounded w-1/3 mb-2"></div><div class="h-4 bg-gray-200 rounded w-3/4 mb-2"></div><div class="h-3 bg-gray-200 rounded w-1/4"></div></div>
                 </div>
             </div>
         </section>
 
-        <!-- Script to inject Weekly Products -->
+        <!-- Script to inject Weekly Products -->
 
-        <section class="px-4 pb-12">
-            <div class="bg-[#2c241b] rounded-2xl p-8 lg:p-12 relative overflow-hidden shadow-2xl">
-                <div class="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-8">
-                    <div class="max-w-xl text-white">
-                        <h3 class="text-3xl lg:text-4xl font-black mb-3 text-primary-light">HAKTAN Ailesine Katılın</h3>
-                        <p class="text-lg opacity-90 font-light text-gray-200">İlk siparişinizde %10 indirim kazanın.
+        <section class="px-4 pb-10">
+            <div class="bg-[#2c241b] rounded-2xl p-6 lg:p-10 relative overflow-hidden shadow-2xl">
+                <div class="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-6">
+                    <div class="max-w-xl text-white text-center lg:text-left">
+                        <h3 class="text-xl lg:text-2xl font-black mb-2 text-primary-light">HAKTAN Ailesine Katılın</h3>
+                        <p class="text-base opacity-90 font-light text-gray-200">İlk siparişinizde %10 indirim kazanın.
                         </p>
                     </div>
                     <div class="w-full max-w-md">
                         <form class="flex gap-2">
                             <input
-                                class="flex-1 rounded-lg border-0 px-4 py-4 text-text-dark bg-white focus:ring-2 focus:ring-primary placeholder:text-gray-400 shadow-lg"
+                                class="flex-1 rounded-lg border-0 px-4 py-3 text-text-dark bg-white focus:ring-2 focus:ring-primary placeholder:text-gray-400 shadow-lg text-sm"
                                 placeholder="E-posta adresinizi giriniz" type="email" />
                             <button
-                                class="bg-primary text-white px-6 py-4 rounded-lg font-bold hover:bg-[#a0740a] transition-colors shadow-lg active:scale-95"
+                                class="bg-primary text-white px-6 py-3 rounded-lg font-bold hover:bg-[#a0740a] transition-colors shadow-lg active:scale-95 text-sm"
                                 type="button">Abone Ol</button>
                         </form>
                     </div>
@@ -243,7 +472,8 @@
     </main>
 
     <!-- Dynamic Footer will be injected here -->
-
+
+    <!-- Old hero slider script removed - replaced by category carousel above -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             // Campaign carousel
@@ -251,8 +481,18 @@
             var prevBtn = document.getElementById('campaignPrev');
             var nextBtn = document.getElementById('campaignNext');
             if (campaignGrid && prevBtn && nextBtn) {
-                prevBtn.addEventListener('click', function () { campaignGrid.scrollBy({ left: -320, behavior: 'smooth' }); });
-                nextBtn.addEventListener('click', function () { campaignGrid.scrollBy({ left: 320, behavior: 'smooth' }); });
+                // Determine scroll amount based on card width + gap
+                const getScrollAmount = () => {
+                    const card = campaignGrid.querySelector('div');
+                    return card ? card.offsetWidth + 16 : 300; // 16 is gap-4
+                };
+
+                prevBtn.addEventListener('click', function () {
+                    campaignGrid.scrollBy({ left: -getScrollAmount(), behavior: 'smooth' });
+                });
+                nextBtn.addEventListener('click', function () {
+                    campaignGrid.scrollBy({ left: getScrollAmount(), behavior: 'smooth' });
+                });
             }
         });
     </script>
